@@ -1,0 +1,123 @@
+//
+// Simulation
+// Pages SASS files are compiled into separate css files
+//
+
+// Initialization of global variables, mixins and functions
+@import "../../init";
+
+#modalSimulationResult .modal-body span { font-size: 41px; letter-spacing: -0.01em; color: #091740; margin-bottom: 20px; display: block; text-align: center; margin-top: 10px;}
+#modalSimulationResult .modal-body p { font-size: 15px; letter-spacing: -0.01em; color: #091740; opacity: 0.6; padding: 0px 30px 0px 30px; text-align: center; margin-top: -15px; }
+#modalSimulationResult .modal-body h4 { font-weight: bold; font-size: 60px; text-align: center; }
+#modalSimulationResult .modal-body img { display: block; margin: 0 auto; text-align: center; width: 50%; margin-top: -20px; }
+#modalSimulationResult .modal-body small { display: block; text-align: center; padding: 0px 50px; opacity: 0.5; font-size: 1rem}
+#modalSimulationResult .modal-body button { border-radius: 3px; font-weight: bold; background: #41C78F; box-shadow: 0px 14px 15px rgba(92,199,143,0.31); border:none; padding: 13px 50px; margin:0 auto; display:block; margin-top: 33px; color:#fff; font-size: 17px; margin-bottom: 20px; }
+#modalSimulationResult .modal-body button:hover { background: #349f72; -moz-transition:all .2s;-webkit-transition:all .2s;-o-transition:all .2s; }
+#modalSimulationResult .modal-body button img { width: 20px; margin: 0; display: inline-block; margin-left: 20px; margin-top: -3px;}
+#modalSimulationResult.modal-content { position: relative; }
+#modalSimulationResult button.close { position: absolute; right: -15px; top: -15px; background: #349f72; opacity: 1; padding: 10px 14px; color:#fff; text-shadow: none; box-shadow: 0px 14px 15px rgba(92,199,143,0.31); z-index: 2; border-radius: 20px; }
+
+@media only screen and (min-width: 900px) {
+    .subtitle-termos { cursor: pointer; font-weight: bold;font-size: 10px !important;color: blue !important; margin-top: -45px !important }
+}
+
+@media only screen and (max-width: 899px) {
+.subtitle-termos { cursor: pointer; font-weight: bold;font-size: 8px !important;color: blue !important; margin-top: -45px !important }
+
+}
+
+#modalSimulationLookup .modal-body span.modal-title { font-size: 41px; letter-spacing: -0.01em; color: #091740; margin-bottom: 20px; display: block; text-align: center; margin-top: 10px;}
+#modalSimulationLookup .modal-body p { font-size: 15px; letter-spacing: -0.01em; color: #091740; opacity: 0.6; text-align: center;  }
+#modalSimulationLookup .modal-body a { color: inherit !important; text-decoration: none !important; }
+#modalSimulationLookup .modal-body h4 { font-weight: bold; font-size: 60px; text-align: center; }
+#modalSimulationLookup .modal-body img { display: block; margin: 0 auto; text-align: center; width: 50%; margin-top: -20px; }
+#modalSimulationLookup .modal-body small { display: block; text-align: center; padding: 0px 50px; opacity: 0.5; font-size: 1rem}
+#modalSimulationLookup .modal-body button { border-radius: 3px; font-weight: bold; background: #41C78F; box-shadow: 0px 14px 15px rgba(92,199,143,0.31); border:none; padding: 13px 50px; margin:0 auto; display:block; margin-top: 23px; color:#fff; font-size: 17px; margin-bottom: 11px; }
+#modalSimulationLookup .modal-body button:hover { background: #349f72; -moz-transition:all .2s;-webkit-transition:all .2s;-o-transition:all .2s; }
+#modalSimulationLookup .modal-body button img { width: 20px; margin: 0; display: inline-block; margin-left: 20px; margin-top: -3px;}
+#modalSimulationLookup.modal-content { position: relative; }
+#modalSimulationLookup button.close { position: absolute; right: -15px; top: -15px; background: #349f72; opacity: 1; padding: 10px 14px; color:#fff; text-shadow: none; box-shadow: 0px 14px 15px rgba(92,199,143,0.31); z-index: 2; border-radius: 20px; }
+
+
+#modalSuccess .modal-body span.modal-title { font-size: 41px; letter-spacing: -0.01em; color: #091740; margin-bottom: 20px; display: block; text-align: center; margin-top: 10px;}
+#modalSuccess .modal-body p { font-size: 15px; letter-spacing: -0.01em; color: #091740; opacity: 0.6; padding: 0px 30px 0px 30px; text-align: center; margin-top: -15px; }
+#modalSuccess .modal-body h4 { font-weight: bold; font-size: 60px; text-align: center; }
+#modalSuccess .modal-body img { display: block; margin: 0 auto; text-align: center; margin-top: 10px; width: 100px }
+#modalSuccess .modal-body small { display: block; text-align: center; padding: 0px 50px; opacity: 0.5; font-size: 1rem}
+#modalSuccess .modal-body button { border-radius: 3px; font-weight: bold; background: #41C78F; box-shadow: 0px 14px 15px rgba(92,199,143,0.31); border:none; padding: 13px 50px; margin:0 auto; display:block; margin-top: 33px; color:#fff; font-size: 17px; margin-bottom: 20px; }
+#modalSuccess .modal-body button:hover { background: #349f72; -moz-transition:all .2s;-webkit-transition:all .2s;-o-transition:all .2s; }
+#modalSuccess .modal-body button img { width: 20px; margin: 0; display: inline-block; margin-left: 20px; margin-top: -3px;}
+#modalSuccess.modal-content { position: relative; }
+#modalSuccess button.close { position: absolute; right: -15px; top: -15px; background: #349f72; opacity: 1; padding: 10px 14px; color:#fff; text-shadow: none; box-shadow: 0px 14px 15px rgba(92,199,143,0.31); z-index: 2; border-radius: 20px; }
+
+
+.simulation {
+    height: 100vh;
+    background: linear-gradient(#f0f5fc 0%, #fff 100%);
+    width: 100%;
+    margin: 0;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    color: #091740;
+
+    h2 { font-size: 35px !important; color: #0A1E5D !important }
+    button { font-size: 21px !important }
+
+    @media only screen and (max-width:899px) {
+
+        p { line-height: 23px !important }
+        h2 { font-size: 30px !important }
+        .subtitle { font-size: 15px !important}
+        .vertical-center { width: 90% !important }
+        input { width: 90% !important}
+        select { width: 90% !important}
+        .btn-back { margin-right: 5px !important }
+
+        button { font-size: 18px !important }
+
+        .content-step .container .vertical-center { margin-top: 30px !important; }
+    }
+
+    .logo { width: 80px; height: 50px; }
+    .heading-step { padding-top: 50px; }
+    .heading-step .container { display: flex; align-items: center; flex-direction: column;}
+    .heading-step img.ambiente { float: right; margin-top: 5px; }
+    .heading-step hr { margin-top: 50px; }
+    .heading-step .user { float: right; }
+    .heading-step .user img { width: 60px; }
+
+    .form-control { font-size: 1.25rem; color: #495057 }
+    .content-step .container .vertical-center {  margin:0 auto; margin-top: 100px; text-align: center; width: 45%; }
+    .content-step .container .vertical-center p { font-size: 18px; letter-spacing: -0.01em; line-height: 32px; margin-top: 20px; opacity: 0.69; }
+    .content-step .container .vertical-center button { border-radius: 26px; font-weight: bold; background: #0A1E5D; box-shadow: 0px 14px 15px rgba(10, 30, 93, 0.18); border:none; padding: 13px 50px; margin-top: 33px; color:#fff; font-size: 17px; }
+    .content-step .container .vertical-center button:hover { background: #3a4a7d; -moz-transition:all .2s;-webkit-transition:all .2s;-o-transition:all .2s; }
+    .content-step .container .vertical-center button img { margin-left: 20px; }
+    .content-step .container .vertical-center .input-group button { border-radius: 0px; height: calc(1.5em + 1.53rem + 2px)  }
+    .content-step .container .vertical-center .input-group button.active { background: #3a4a7d; border-radius: 0px; height: calc(1.5em + 1.53rem + 2px)  }
+
+    .content-step .container .vertical-center button.btn-back { background:#41c78f; box-shadow: 0px 14px 15px rgba(70, 70, 70, 0.18); margin-right: 20px; width: 223px }
+
+    .content-step .container .vertical-center input.form-control { padding: 25px; box-shadow: 0px 14px 15px rgba(10, 30, 93, 0.1); border:none; text-align: center; width: 70%; margin:0 auto; display: block; margin-top: 30px; }
+    .content-step .container .vertical-center input.form-control.custom-group { width: auto !important }
+    .content-step .container .vertical-center select.form-control { box-shadow: 0px 14px 15px rgba(10, 30, 93, 0.1); border:none; text-align: center; box-sizing: border-box; height: 50px; width: 70%; margin:0 auto; display: block; margin-top: 30px; }
+        
+    .content-step .container .suporte { width: 300px; height: 67px; position: absolute; bottom: 50px; right: 50px; }
+    .content-step .container .suporte .status { background: #41C78F; border:2px solid #fff; width: 15px; height: 15px; border-radius: 50px; position: absolute; left: 60px; bottom: 7px;}
+    .content-step .container .suporte img { float: left; }
+    .content-step .container .suporte span { font-size: 16px; font-weight: bold; display: block; margin-top: 10px; }
+    .content-step .container .suporte p { font-size: 13px; opacity: 0.6; }
+
+    .content-resultado { padding-top: 50px; }
+    .content-resultado h2 { font-size: 41px; letter-spacing: -0.01em; color: #091740; margin-bottom: 20px;}
+    .content-resultado p { font-size: 17px; letter-spacing: -0.01em; color: #091740; opacity: 0.6; padding: 0px 35% 0px 0px; }
+    .content-resultado button { border-radius: 26px; font-weight: bold; background: #41C78F; box-shadow: 0px 14px 15px rgba(92, 199, 143, 0.31); border:none; padding: 13px 50px; margin-top: 33px; color:#fff; font-size: 17px; }
+    .content-resultado button:hover { background: #349f72; -moz-transition:all .2s;-webkit-transition:all .2s;-o-transition:all .2s; }
+    .content-resultado button img { margin-left: 20px; }
+    .content-resultado span { font-size: 1.25rem; }
+
+    .content-resultado .row { margin-top: 60px; }
+    .content-resultado .row .col span { font-weight: bold; }
+    .content-resultado .row .col p { margin-bottom: 30px; }
+
+  
+}

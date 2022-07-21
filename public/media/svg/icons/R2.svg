@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="339" height="260" viewBox="0 0 339 260">
+  <defs>
+    <clipPath id="clip-R2">
+      <rect width="339" height="260"/>
+    </clipPath>
+  </defs>
+  <g id="R2" clip-path="url(#clip-R2)">
+    <rect width="339" height="260" fill="#fff"/>
+    <path id="Path_1" data-name="Path 1" d="M3226.741,356.189l72.325,41.757a83.134,83.134,0,0,1,22.705-21.805l-41.7-72.227A166.919,166.919,0,0,0,3226.741,356.189Z" transform="translate(-3197.51 -237.445)" fill="#ff7a33"/>
+    <path id="Path_2" data-name="Path 2" d="M3344.2,277.413l41.741,72.3a82.731,82.731,0,0,1,30.161-7.832V258.457A165.969,165.969,0,0,0,3344.2,277.413Z" transform="translate(-3252.367 -216.213)" fill="#ffc533"/>
+    <path id="Path_3" data-name="Path 3" d="M3177.95,494.027h83.423a82.378,82.378,0,0,1,9.331-33.152L3198.5,419.187A165.716,165.716,0,0,0,3177.95,494.027Z" transform="translate(-3173.949 -291.285)" fill="#e32d2d"/>
+    <path id="Path_4" data-name="Path 4" d="M3499.111,341.88a82.726,82.726,0,0,1,30.16,7.832l41.742-72.3a165.97,165.97,0,0,0-71.9-18.956Z" transform="translate(-3324.723 -216.213)" fill="#6dd958"/>
+    <path id="Path_5" data-name="Path 5" d="M3635.561,494.027h83.422a165.717,165.717,0,0,0-20.547-74.84l-72.206,41.688A82.392,82.392,0,0,1,3635.561,494.027Z" transform="translate(-3383.381 -291.285)" fill="#009499"/>
+    <path id="Path_6" data-name="Path 6" d="M3573.165,376.141a83.111,83.111,0,0,1,22.706,21.8l72.325-41.756a166.914,166.914,0,0,0-53.33-52.275Z" transform="translate(-3359.313 -237.445)" fill="#27b879"/>
+    <path id="Path_7" data-name="Path 7" d="M171,0,31.193,25.129a17.566,17.566,0,1,0,3.439,15.412,17.789,17.789,0,0,0,.377-2.015Z" transform="matrix(-0.485, -0.875, 0.875, -0.485, 147.171, 248.024)" fill="#2b2b2b"/>
+    <text id="_100_" data-name="100%" transform="translate(260.9 239)" fill="#0a1e5d" font-size="24" font-family="CamphorW01-Bold" font-weight="700"><tspan x="0" y="0">100%</tspan></text>
+    <text id="_0_" data-name="0%" transform="translate(28.9 239)" fill="#0a1e5d" font-size="25" font-family="CamphorW01-Bold" font-weight="700"><tspan x="0" y="0">0%</tspan></text>
+  </g>
+</svg>
