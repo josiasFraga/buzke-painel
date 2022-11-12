@@ -6,6 +6,7 @@ import { LayoutSplashScreen, ContentRoute } from "../_metronic/layout";
 import { BuilderPage } from "./pages/BuilderPage";
 import { MyPage } from "./pages/MyPage";
 import { DashboardPage } from "./pages/DashboardPage";
+import { Agenda } from "./pages/Agenda";
 import { Oportunidades } from './pages/Oportunidades';
 import { Revisional } from './pages/Revisional';
 import { Clientes } from './pages/Clientes';
@@ -91,10 +92,6 @@ export default function BasePage() {
   return (
     <Suspense fallback={<LayoutSplashScreen />}>
 
-
-
-
-
       <Switch>
         {
           /* Redirect from root URL to /dashboard. */
@@ -102,6 +99,7 @@ export default function BasePage() {
         }
         <ContentRoute path="/dashboard" component={DashboardPage} />
         <ContentRoute path="/clientes" component={Clientes} />
+        <ContentRoute path="/agenda" component={Agenda} />
         <ContentRoute path="/telasPerfilUsuario" component={Telas} />
         <ContentRoute path="/admin/clientes" component={AdminClientes} />
         <ContentRoute path="/pensao/:calculo_id" component={Pensao} />
