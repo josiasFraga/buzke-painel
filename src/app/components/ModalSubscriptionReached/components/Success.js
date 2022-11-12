@@ -33,7 +33,7 @@ export default function Success(props) {
     const dispatch = useDispatch();
 
     const navegar = () => {
-        dispatch({type: 'LOAD_SUBSCRIPTION_STATUS'});
+        //dispatch({type: 'LOAD_SUBSCRIPTION_STATUS'});
         dispatch({type: 'CLOSE_MODAL_SUBSCRIPTION'});
         props.setScreen('choose_plan');
     }

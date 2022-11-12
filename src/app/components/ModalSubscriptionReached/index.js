@@ -166,11 +166,11 @@ export default function ModalSubscriptionReached(props) {
     }, [formik.values.product_selected]);
 
     useEffect(() => {
-        dispatch({type: 'LOAD_CARDS'});
+        //dispatch({type: 'LOAD_CARDS'});
     }, []);
     const closeModal = () => {
         setScreen('choose_plan');
-        dispatch({type: 'LOAD_SUBSCRIPTION_STATUS'});
+        //dispatch({type: 'LOAD_SUBSCRIPTION_STATUS'});
         dispatch({type: 'CLOSE_MODAL_SUBSCRIPTION'});
     }
 

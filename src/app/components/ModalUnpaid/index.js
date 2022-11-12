@@ -60,10 +60,10 @@ export default function ModalUnpaid(props) {
                 <a href={(Object.keys(subscription_status).length > 0 ? subscription_status.manage_url : '')} className="btn btn-primary" target="_BLANK">Gerenciar Pagamento</a>
                 <br/>
                 <br/>
-                <a href="https://api.whatsapp.com/send?phone=5511933304069&text=" target="_BLANK">Entrar em contato via Whatsapp</a>
+                <a href="https://api.whatsapp.com/send?phone=555596879932&text=" target="_BLANK">Entrar em contato via Whatsapp</a>
                 <br/>
                 <br/>
-                <a href="https://app.jusfy.com.br/logout">Sair do sistema</a>
+                <a href="https://app.buzke.com.br/logout">Sair do sistema</a>
             </Modal.Body>
         </ResponsiveModal>
     ); 

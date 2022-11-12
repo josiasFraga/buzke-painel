@@ -48,7 +48,7 @@ export function Layout({ children }) {
     }, [subscription_status]);
 
     useEffect(() => {
-        dispatch({type: 'LOAD_SUBSCRIPTION_STATUS'});
+        //dispatch({type: 'LOAD_SUBSCRIPTION_STATUS'});
     }, []);
     
     const uiService = useHtmlClassService();

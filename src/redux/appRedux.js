@@ -28,8 +28,6 @@ const INITIAL_STATE = {
     is_petitions_loading: false,
     petition: {},
     is_petition_loading: false,
-    customers: [],
-    is_customers_loading: false,
     institutions: [],
     institutions_select: [],
     is_institutions_loading: false,
@@ -104,9 +102,6 @@ const INITIAL_STATE = {
     is_report_rent_loading: false,
     states: [],
     is_states_loading: false,
-    cities: [],
-    is_cities_loading: false,
-    customer: {},
     is_customer_loading: false,
     jurisprudences: {},
     is_jurisprudences_loading: false,
@@ -490,6 +485,20 @@ const INITIAL_STATE = {
     notifications: [],
     notifications_not_read: 0,
     is_notifications_loading: false,
+    customer: {},
+
+    customers: [],
+    is_customers_loading: false,
+    is_customer_deleting: true,
+
+    ufs: [],
+    is_ufs_loading: false,
+
+    cities: [],
+    is_cities_loading: false,
+
+    address_by_postal_code: [],
+    is_address_by_postal_code_loading: false,
 };
 
 export const reducer = (state = INITIAL_STATE, action) => {
@@ -664,12 +673,6 @@ export const reducer = (state = INITIAL_STATE, action) => {
             return { ...state, simulation_result: action.payload, is_simulation_loading: false }
         case 'LOAD_SIMULATION_FAILED':
             return { ...state, simulation_result: INITIAL_STATE.simulation_result, is_simulation_loading: false }
-        case 'LOAD_CUSTOMERS':
-            return { ...state, customers: INITIAL_STATE.customers, is_customers_loading: true }
-        case 'LOAD_CUSTOMERS_SUCCESS':
-            return { ...state, customers: action.payload, is_customers_loading: false }
-        case 'LOAD_CUSTOMERS_FAILED':
-            return { ...state, customers: INITIAL_STATE.customers, is_customers_loading: false }
         case 'LOAD_INDEXES':
             return { ...state, indexes: [], indexes_pf: [], indexes_pj: [], is_indexes_loading: true }
         case 'LOAD_INDEXES_SUCCESS':
@@ -725,12 +728,6 @@ export const reducer = (state = INITIAL_STATE, action) => {
             return { ...state, states: action.payload, is_states_loading: false }
         case 'LOAD_STATES_FAILED':
             return { ...state, states: INITIAL_STATE.states, is_states_loading: false }
-        case 'LOAD_CITIES':
-            return { ...state, cities: INITIAL_STATE.cities, is_cities_loading: true }
-        case 'LOAD_CITIES_SUCCESS':
-            return { ...state, cities: action.payload, is_cities_loading: false }
-        case 'LOAD_CITIES_FAILED':
-            return { ...state, cities: INITIAL_STATE.cities, is_cities_loading: false }
         case 'LOAD_CUSTOMER':
             return { ...state, customer: INITIAL_STATE.customer, is_customer_loading: true }
         case 'LOAD_CUSTOMER_SUCCESS':
@@ -779,11 +776,40 @@ export const reducer = (state = INITIAL_STATE, action) => {
             return { ...state, notifications: action.payload.notifications, is_notifications_loading: false, notifications_not_read: action.payload.n_not_read }
         case 'LOAD_NOTIFICATIONS_FAILED':
             return { ...state, notifications: [], is_notifications_loading: false, notifications_not_read: 0 }
-        
-        //Josias
-
         case 'SET_RENT_INSTALLMENTS':
             return { ...state, rent_installments: action.payload.installments, rent_contract_indexes: action.payload.indexes }
+
+        case 'LOAD_CUSTOMERS':
+            return { ...state, customers: INITIAL_STATE.customers, is_customers_loading: true }
+        case 'LOAD_CUSTOMERS_SUCCESS':
+            return { ...state, customers: action.payload, is_customers_loading: false }
+        case 'LOAD_CUSTOMERS_FAILED':
+            return { ...state, customers: INITIAL_STATE.customers, is_customers_loading: false }
+        case 'LOAD_UFS':
+            return { ...state, ufs: INITIAL_STATE.ufs, is_ufs_loading: true }
+        case 'LOAD_UFS_SUCCESS':
+            return { ...state, ufs: action.payload, is_ufs_loading: false }
+        case 'LOAD_UFS_FAILED':
+            return { ...state, ufs: INITIAL_STATE.ufs, is_ufs_loading: false }
+        case 'LOAD_CITIES':
+            return { ...state, cities: INITIAL_STATE.cities, is_cities_loading: true }
+        case 'LOAD_CITIES_SUCCESS':
+            return { ...state, cities: action.payload, is_cities_loading: false }
+        case 'LOAD_CITIES_FAILED':
+            return { ...state, cities: INITIAL_STATE.cities, is_cities_loading: false }
+        case 'LOAD_ADDRESS_BY_POSTAL_CODE':
+            return { ...state, address_by_postal_code: INITIAL_STATE.address_by_postal_code, is_address_by_postal_code_loading: true }
+        case 'LOAD_ADDRESS_BY_POSTAL_CODE_SUCCESS':
+            return { ...state, address_by_postal_code: action.payload, is_address_by_postal_code_loading: false }
+        case 'LOAD_ADDRESS_BY_POSTAL_CODE_FAILED':
+            return { ...state, address_by_postal_code: INITIAL_STATE.cities, is_address_by_postal_code_loading: false }
+        case 'DELETE_CUSTOMER':
+            return { ...state, is_customer_deleting: true }
+        case 'DELETE_CUSTOMER_SUCCESS':
+            return { ...state, is_customer_deleting: false }
+        case 'DELETE_CUSTOMER_FAILED':
+            return { ...state, is_customer_deleting: false }
+
         default:
             return state;
     }
@@ -860,15 +886,6 @@ function* loadDashboard({payload}) {
     }
 }
 
-function* loadCustomers({payload}) {
-    try {
-        const response = yield axios.get(process.env.REACT_APP_API_URL + `/client_customers`, payload);
-        yield put({type: 'LOAD_CUSTOMERS_SUCCESS', payload: response.data.data});
-    } catch {
-        yield put({type: 'LOAD_CUSTOMERS_FAILED'});
-    }
-}
-
 function* loadIndexes({payload}) {
     try {
         const response = yield axios.get(process.env.REACT_APP_API_URL + `/indexes`, payload);
@@ -916,21 +933,6 @@ function* loadStates({payload}) {
         yield put({type: 'LOAD_STATES_SUCCESS', payload: response.data.data});
     } catch {
         yield put({type: 'LOAD_STATES_FAILED'});
-    }
-}
-
-function* loadCities({payload}) {
-    try {
-        if (payload.state == '' || payload.state == null) {
-            yield put({type: 'LOAD_CITIES_SUCCESS', payload: []});
-            return true;
-        }
-        const response = yield axios.get(process.env.REACT_APP_API_URL + `/locations/cities/${payload.state}`, {});
-
-        yield put({type: 'LOAD_CITIES_SUCCESS', payload: response.data.data});
-        if (payload.callback !== undefined) payload.callback(response.data.data);
-    } catch {
-        yield put({type: 'LOAD_CITIES_FAILED'});
     }
 }
 
@@ -1048,18 +1050,6 @@ function* reportRent({payload}) {
     } catch (err) {
         yield put({type: 'REPORT_RENT_FAILED'});
         toast.error("Ocorreu um erro ao carregar o relatório, tente novamente.");
-        payload.setSubmitting(false);
-    }
-}
-
-function* saveCustomer({payload}) {
-    try {
-        const response = yield axios.post(process.env.REACT_APP_API_URL + `/client_customers`, payload.submitValues);
-        payload.setSubmitting(false);
-        toast.success("Cliente salvo com sucesso!");
-        payload.callback();
-    } catch {
-        toast.error("Ocorreu um erro ao salvar o cliente, tente novamente.");
         payload.setSubmitting(false);
     }
 }
@@ -1442,6 +1432,107 @@ function* setNotificationRead({payload}) {
     }
 }
 
+function* loadCustomers({payload}) {
+    try {
+
+        const response = yield axios.get(process.env.REACT_APP_API_URL + `/clientes/clientes`, payload);
+        console.log(response);
+        yield put({type: 'LOAD_CUSTOMERS_SUCCESS', payload: response.data.dados});
+    } catch (e) {
+        yield put({type: 'LOAD_CUSTOMERS_FAILED'});
+    }
+}
+
+function* loadUfs({payload}) {
+    try {
+
+        const response = yield axios.get(process.env.REACT_APP_API_URL + `/estados/index`, payload);
+        console.log(response);
+        yield put({type: 'LOAD_UFS_SUCCESS', payload: response.data.dados});
+    } catch (e) {
+        yield put({type: 'LOAD_UFS_FAILED'});
+    }
+}
+
+function* loadCities({payload}) {
+    try {
+        if (payload.uf == '' || payload.uf == null) {
+            yield put({type: 'LOAD_CITIES_SUCCESS', payload: []});
+            return true;
+        }
+        const response = yield axios.get(process.env.REACT_APP_API_URL + `/cidades/index/${payload.uf}/`, {});
+
+        yield put({type: 'LOAD_CITIES_SUCCESS', payload: response.data.dados});
+        if (payload.callback !== undefined) payload.callback(response.data.dados);
+    } catch {
+        yield put({type: 'LOAD_CITIES_FAILED'});
+    }
+}
+
+function* loadAddressByPostalCode({payload}) {
+    try {
+
+        if ( payload == null ) {
+            yield put({type: 'LOAD_ADDRESS_BY_POSTAL_CODE_SUCCESS', payload: []});
+            return true;
+        }
+
+        const response = yield axios.get(process.env.REACT_APP_API_URL + `/enderecos/buscaDadosCep/`, {params: {
+            cep: payload
+        }});
+
+        yield put({type: 'LOAD_ADDRESS_BY_POSTAL_CODE_SUCCESS', payload: response.data.dados});
+        if (payload.callback !== undefined) payload.callback(response.data.dados);
+    } catch {
+        yield put({type: 'LOAD_ADDRESS_BY_POSTAL_CODE_FAILED'});
+    }
+}
+
+function* saveCustomer({payload}) {
+    try {
+
+        let url = process.env.REACT_APP_API_URL + `/ClientesClientes/cadastrar`;
+        let msg_success = "Cliente salvo com sucesso!";
+
+        if ( payload.submitValues.id && payload.submitValues.id != "" ) {
+            url = process.env.REACT_APP_API_URL + `/ClientesClientes/alterar`;
+            msg_success = "Cliente atualizado com sucesso!";
+        }
+
+        const response = yield axios.post(url, payload.submitValues, {
+            headers: {
+                'content-type': 'application/x-www-form-urlencoded',
+                'Accept': 'application/json',
+            }
+        });
+        payload.setSubmitting(false);
+        toast.success(msg_success);
+        payload.callback();
+    } catch (e) {
+        console.log(e);
+        toast.error("Ocorreu um erro ao salvar o cliente, tente novamente.");
+        payload.setSubmitting(false);
+    }
+}
+
+function* deleteCustomer({payload}) {
+    try {
+        const response = yield axios.post(process.env.REACT_APP_API_URL + `/ClientesClientes/excluir`, payload, {
+            headers: {
+                'content-type': 'application/x-www-form-urlencoded',
+                'Accept': 'application/json',
+            }
+        });
+        yield put({type: 'DELETE_CUSTOMER_SUCCESS', payload: []});
+        toast.success("Cliente excluido com sucesso!");
+        payload.callback();
+    } catch {
+        toast.error("Ocorreu um erro ao excluir o cliente, tente novamente.");
+        yield put({type: 'DELETE_CUSTOMER_FAILED', payload: []});
+    }
+}
+
+
 export function* saga() {
     yield takeLatest('ACTIVATE_ACCOUNT', activateAccount);
     yield takeLatest('LOAD_CARDS', loadCards);
@@ -1455,15 +1546,12 @@ export function* saga() {
     yield takeLatest('LOAD_PETITIONS_CATEGORIES', loadPetitionsCategories);
     yield takeLatest('LOAD_PETITIONS_CATEGORY_TYPES', loadPetitionsCategoryTypes);
     yield takeLatest('LOAD_SIMULATION', loadSimulation);
-    yield takeLatest('LOAD_CUSTOMERS', loadCustomers);
     yield takeLatest('LOAD_INDEXES', loadIndexes);
     yield takeLatest('REPORT_REVIEW', reportReview);
     yield takeLatest('REPORT_CORRECTION', reportCorrection);
     yield takeLatest('REPORT_CORRECTION_FGTS', reportCorrectionFgts);
     yield takeLatest('REPORT_CORRECTION_COMPLETE', reportCorrectionComplete);
     yield takeLatest('LOAD_STATES', loadStates);
-    yield takeLatest('LOAD_CITIES', loadCities);
-    yield takeLatest('SAVE_CUSTOMER', saveCustomer);
     yield takeLatest('LOAD_CUSTOMER', loadCustomer);
     yield takeLatest('LOAD_JURISPRUDENCES', loadJurisprudences);
     yield takeLatest('LOAD_JURISPRUDENCE', loadJurisprudence);
@@ -1488,4 +1576,12 @@ export function* saga() {
     yield takeLatest('LOAD_RENT_INSTALLMENTS', loadRentInstallments);
     yield takeLatest('LOAD_NOTIFICATIONS', loadNotifications);
     yield takeLatest('SET_NOTIFICATIONS_READ', setNotificationRead);
+
+    yield takeLatest('LOAD_CUSTOMERS', loadCustomers);
+    yield takeLatest('LOAD_UFS', loadUfs);
+    yield takeLatest('LOAD_CITIES', loadCities);
+    yield takeLatest('LOAD_ADDRESS_BY_POSTAL_CODE', loadAddressByPostalCode);
+    yield takeLatest('SAVE_CUSTOMER', saveCustomer);
+    yield takeLatest('DELETE_CUSTOMER', deleteCustomer);
+    
 }

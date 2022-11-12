@@ -33,7 +33,7 @@ export default function Success(props) {
     const dispatch = useDispatch();
 
     const navegar = () => {
-        dispatch({type: 'LOAD_SUBSCRIPTION_STATUS'});
+        //dispatch({type: 'LOAD_SUBSCRIPTION_STATUS'});
     }
     return (
 

@@ -24,13 +24,13 @@ export function Brand() {
     <>
       {/* begin::Brand */}
       <div
-          className={`brand flex-column-auto ${layoutProps.brandClasses}`}
+          className={`brand flex-column-auto ${layoutProps.brandClasses} justfy-center`}
           id="kt_brand"
       >
         {/* begin::Logo */}
         <Link to="" className="brand-logo">
-          <img alt="logo" src={layoutProps.headerLogo} />
-          <span>A ferramenta definitiva para seu escritório</span>
+          <img alt="logo" src={layoutProps.headerLogo} width="80px" />
+          <span></span>
         </Link>
         {/* end::Logo */}
       </div>

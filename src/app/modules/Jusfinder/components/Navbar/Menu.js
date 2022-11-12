@@ -170,7 +170,7 @@ const Menu = ({ open, login }) => {
     { isAuthorized &&
       <Dropdown>
         <Dropdown.Toggle className="active">
-            <span className="pointer" style={{color: '#fff'}}>Bem-vindo, {user.name.split(" ")[0]}.  </span>
+            <span className="pointer" style={{color: '#fff'}}>Bem-vindo, {user.nome.split(" ")[0]}.  </span>
         </Dropdown.Toggle>
         <Dropdown.Menu>
         <Dropdown.Item onClick={() => {}}>Meu Perfil</Dropdown.Item>

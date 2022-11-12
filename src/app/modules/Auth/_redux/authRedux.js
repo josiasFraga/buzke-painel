@@ -14,17 +14,17 @@ export const actionTypes = {
 
 const initialAuthState = {
   user: undefined,
-  authToken: undefined,
+  //authToken: undefined,
+  business: undefined,
+  token: undefined,
 };
 
 export const reducer = persistReducer(
-  { storage, key: "v713-demo1-auth", whitelist: ["user", "authToken"] },
+  { storage, key: "v713-demo1-auth", whitelist: ["user", "token", `business`] },
   (state = initialAuthState, action) => {
     switch (action.type) {
       case actionTypes.Login: {
-        const { authToken } = action.payload;
-
-        return { authToken, user: undefined };
+        return { user: action.payload.Usuario, business: action.payload.Cliente, token: action.payload.Token };
       }
 
       case actionTypes.Register: {
@@ -55,7 +55,7 @@ export const reducer = persistReducer(
 );
 
 export const actions = {
-  login: (authToken) => ({ type: actionTypes.Login, payload: { authToken } }),
+  login: (data) => ({ type: actionTypes.Login, payload: data }),
   register: (authToken) => ({
     type: actionTypes.Register,
     payload: { authToken },
@@ -71,11 +71,11 @@ export const actions = {
 
 export function* saga() {
   yield takeLatest(actionTypes.Login, function* loginSaga() {
-    yield put(actions.requestUser());
+    //yield put(actions.requestUser());
   });
 
   yield takeLatest(actionTypes.Register, function* registerSaga() {
-    yield put(actions.requestUser());
+    //yield put(actions.requestUser());
   });
 
   yield takeLatest(actionTypes.UserRequested, function* userRequested() {

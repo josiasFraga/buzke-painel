@@ -31,7 +31,7 @@ export function Perfil() {
     useEffect(() => {
         dispatch({type: 'LOAD_STATES'});
         dispatch({type: 'LOAD_PROFESSIONS'});
-        dispatch({type: 'LOAD_CARDS'});
+        //dispatch({type: 'LOAD_CARDS'});
     }, []);
 
     const [initialValues, setInitialValues] = useState({
@@ -110,7 +110,7 @@ export function Perfil() {
             return true;
         }
         setInitialValues({
-            name: user.name,
+            name: user.nome,
             email: user.email,
             document_number: user.document_number,
             phone: user.phone,

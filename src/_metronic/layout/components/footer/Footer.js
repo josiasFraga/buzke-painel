@@ -23,17 +23,17 @@ export function Footer() {
         <div className="text-dark order-2 order-md-1">
           <span className="text-muted font-weight-bold mr-2">{today.toString()}</span> &copy;{" "}
           <a
-            href="https://jusfy.com.br"
+            href="https://buzke.com.br"
             target="_blank"
             rel="noopener noreferrer"
             className="text-dark-75 text-hover-primary"
           >
-            Jusfy
+            Buzke
           </a>
         </div>
         <div className="nav nav-dark order-1 order-md-2">
           <a
-            href="https://jusfy.com.br"
+            href="https://buzke.com.br/sobre"
             target="_blank"
             rel="noopener noreferrer"
             className="nav-link pr-3 pl-0"
@@ -42,7 +42,7 @@ export function Footer() {
           </a>
 
           <a
-            href="https://jusfy.com.br"
+            href="https://buzke.com.br/contato"
             target="_blank"
             rel="noopener noreferrer"
             className="nav-link pl-3 pr-0"

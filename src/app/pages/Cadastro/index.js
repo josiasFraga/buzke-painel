@@ -215,11 +215,11 @@ export default function Register(props) {
                 <div className="row mb-10">
                     <div className="col-xl-12 d-flex align-items-center">
                         <div className="logo flex-grow-1">
-                            <img src={toAbsoluteUrl("/media/svg/logos/logo-jusfy.svg")} />
+                            <img src={toAbsoluteUrl("/media/svg/logos/logo-buzke.svg")} />
                         </div>
 
                         <div className="menu">
-                            <a href="https://jusfy.com.br"><span className="mr-10 font-size-h6">SOBRE</span></a>
+                            <a href="https://buzke.com.br"><span className="mr-10 font-size-h6">SOBRE</span></a>
                             <Link to="/"><button className="btn btn-primary">ENTRAR</button></Link>
                         </div>
                     </div>

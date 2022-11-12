@@ -49,7 +49,7 @@ const Content = styled.div`
 
 export default function ModalDeslogado(props) {
     const register = () => {
-        window.location = 'https://app.jusfy.com.br/register/jusfinder';
+        window.location = 'https://app.buzke.com.br/register/jusfinder';
     }
 
     return (

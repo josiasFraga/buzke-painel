@@ -212,7 +212,7 @@ export default function Jusfinder() {
             <Container className="container">
                 <Header className="row">
                     <Logo>
-                        <a href="https://jusfy.com.br" target="_BLANK"><img src={toAbsoluteUrl("/media/logo-jusfinder.svg")} /></a>
+                        <a href="https://buzke.com.br" target="_BLANK"><img src={toAbsoluteUrl("/media/logo-jusfinder.svg")} /></a>
                     </Logo>
                     <ResponsiveMenu login={login} />
                 </Header>
@@ -245,7 +245,7 @@ export default function Jusfinder() {
             <Container className="container">
                 <Footer>
                     <p>Powered by</p>
-                    <img src={toAbsoluteUrl("/media/logo-jusfy.svg")} />
+                    <img src={toAbsoluteUrl("/media/logo-buzke.svg")} />
                 </Footer>
             </Container>
         </>

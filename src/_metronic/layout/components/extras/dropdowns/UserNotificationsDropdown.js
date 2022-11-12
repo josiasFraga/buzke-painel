@@ -45,10 +45,10 @@ export function UserNotificationsDropdown() {
 
   useEffect(() => {
 
-    dispatch({
+    /*dispatch({
         type: 'LOAD_NOTIFICATIONS',
         payload: {}
-    });
+    });*/
 
   }, []);
 
