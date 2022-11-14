@@ -490,6 +490,8 @@ const INITIAL_STATE = {
     customers: [],
     is_customers_loading: false,
     is_customer_deleting: true,
+    customers_list: [],
+    is_customers_list_loading: false,
 
     ufs: [],
     is_ufs_loading: false,
@@ -499,6 +501,12 @@ const INITIAL_STATE = {
 
     address_by_postal_code: [],
     is_address_by_postal_code_loading: false,
+
+    courts_services: [],
+    is_courts_services_loading: false,
+
+    schedules: [],
+    is_schedules_loading: false,
 };
 
 export const reducer = (state = INITIAL_STATE, action) => {
@@ -785,6 +793,12 @@ export const reducer = (state = INITIAL_STATE, action) => {
             return { ...state, customers: action.payload, is_customers_loading: false }
         case 'LOAD_CUSTOMERS_FAILED':
             return { ...state, customers: INITIAL_STATE.customers, is_customers_loading: false }
+        case 'LOAD_CUSTOMERS_LIST':
+            return { ...state, customers_list: INITIAL_STATE.customers, is_customers_list_loading: true }
+        case 'LOAD_CUSTOMERS_LIST_SUCCESS':
+            return { ...state, customers_list: action.payload, is_customers_list_loading: false }
+        case 'LOAD_CUSTOMERS_LIST_FAILED':
+            return { ...state, customers_list: INITIAL_STATE.customers_list, is_customers_list_loading: false }
         case 'LOAD_UFS':
             return { ...state, ufs: INITIAL_STATE.ufs, is_ufs_loading: true }
         case 'LOAD_UFS_SUCCESS':
@@ -803,12 +817,24 @@ export const reducer = (state = INITIAL_STATE, action) => {
             return { ...state, address_by_postal_code: action.payload, is_address_by_postal_code_loading: false }
         case 'LOAD_ADDRESS_BY_POSTAL_CODE_FAILED':
             return { ...state, address_by_postal_code: INITIAL_STATE.cities, is_address_by_postal_code_loading: false }
+        case 'LOAD_COURTS_SERVICES':
+            return { ...state, courts_services: INITIAL_STATE.courts_services, is_courts_services_loading: true }
+        case 'LOAD_COURTS_SERVICES_SUCCESS':
+            return { ...state, courts_services: action.payload, is_courts_services_loading: false }
+        case 'LOAD_COURTS_SERVICES_FAILED':
+            return { ...state, courts_services: INITIAL_STATE.cities, is_courts_services_loading: false }
         case 'DELETE_CUSTOMER':
             return { ...state, is_customer_deleting: true }
         case 'DELETE_CUSTOMER_SUCCESS':
             return { ...state, is_customer_deleting: false }
         case 'DELETE_CUSTOMER_FAILED':
             return { ...state, is_customer_deleting: false }
+        case 'LOAD_SCHEDULES':
+            return { ...state, schedules: INITIAL_STATE.schedules, is_schedules_loading: true }
+        case 'LOAD_SCHEDULES_SUCCESS':
+            return { ...state, schedules: action.payload, is_schedules_loading: false }
+        case 'LOAD_SCHEDULES_FAILED':
+            return { ...state, schedules: INITIAL_STATE.cities, is_schedules_loading: false }
 
         default:
             return state;
@@ -1436,10 +1462,21 @@ function* loadCustomers({payload}) {
     try {
 
         const response = yield axios.get(process.env.REACT_APP_API_URL + `/clientes/clientes`, payload);
-        console.log(response);
+        
         yield put({type: 'LOAD_CUSTOMERS_SUCCESS', payload: response.data.dados});
     } catch (e) {
         yield put({type: 'LOAD_CUSTOMERS_FAILED'});
+    }
+}
+
+function* loadCustomersList({payload}) {
+    try {
+
+        const response = yield axios.get(process.env.REACT_APP_API_URL + `/clientes/clientes_list`, payload);
+        
+        yield put({type: 'LOAD_CUSTOMERS_LIST_SUCCESS', payload: response.data.dados});
+    } catch (e) {
+        yield put({type: 'LOAD_CUSTOMERS_LIST_FAILED'});
     }
 }
 
@@ -1447,7 +1484,7 @@ function* loadUfs({payload}) {
     try {
 
         const response = yield axios.get(process.env.REACT_APP_API_URL + `/estados/index`, payload);
-        console.log(response);
+        
         yield put({type: 'LOAD_UFS_SUCCESS', payload: response.data.dados});
     } catch (e) {
         yield put({type: 'LOAD_UFS_FAILED'});
@@ -1532,6 +1569,28 @@ function* deleteCustomer({payload}) {
     }
 }
 
+function* loadCourtServices({payload}) {
+    try {
+
+        const response = yield axios.get(process.env.REACT_APP_API_URL + `/clientes/servicos`, payload);
+        
+        yield put({type: 'LOAD_COURTS_SERVICES_SUCCESS', payload: response.data.dados});
+    } catch (e) {
+        yield put({type: 'LOAD_COURTS_SERVICES_FAILED'});
+    }
+}
+
+function* loadSchedules({payload}) {
+    try {
+
+        const response = yield axios.get(process.env.REACT_APP_API_URL + `/agendamentos/empresa`, payload);
+        
+        yield put({type: 'LOAD_SCHEDULES_SUCCESS', payload: response.data.dados});
+    } catch (e) {
+        yield put({type: 'LOAD_SCHEDULES_FAILED'});
+    }
+}
+
 
 export function* saga() {
     yield takeLatest('ACTIVATE_ACCOUNT', activateAccount);
@@ -1578,10 +1637,15 @@ export function* saga() {
     yield takeLatest('SET_NOTIFICATIONS_READ', setNotificationRead);
 
     yield takeLatest('LOAD_CUSTOMERS', loadCustomers);
+    yield takeLatest('LOAD_CUSTOMERS_LIST', loadCustomersList);
     yield takeLatest('LOAD_UFS', loadUfs);
     yield takeLatest('LOAD_CITIES', loadCities);
     yield takeLatest('LOAD_ADDRESS_BY_POSTAL_CODE', loadAddressByPostalCode);
     yield takeLatest('SAVE_CUSTOMER', saveCustomer);
     yield takeLatest('DELETE_CUSTOMER', deleteCustomer);
+
+    yield takeLatest('LOAD_COURTS_SERVICES', loadCourtServices);
+
+    yield takeLatest('LOAD_SCHEDULES', loadSchedules);
     
 }

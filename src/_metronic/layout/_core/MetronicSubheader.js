@@ -50,7 +50,7 @@ export function getTitle(breadCrumbs, pathname) {
   return breadCrumbs[length - 1].title;
 }
 
-const SubheaderContext = createContext(false);
+const SubheaderContext = createContext();
 
 export function useSubheader() {
   return useContext(SubheaderContext);
