@@ -3,12 +3,13 @@ import { useSelector, useDispatch } from 'react-redux';
 import PickerClientes from "../../../components/Forms/Components/Pickers/Clientes";
 import Form from 'react-bootstrap/Form';
 
-export function Filters() {
+export function Filters(props) {
 
     const dispatch = useDispatch();
 
     const [filterClient, setFilterClient] = useState("");
-    const [filterCourtServices, setFilterCourtServices] = useState({services_ids: []});
+    const filterCourtServices = props.filterCourtServices;
+    const setFilterCourtServices = props.setFilterCourtServices;
 
     const my_courts_services = useSelector(state => state.app.courts_services);
 

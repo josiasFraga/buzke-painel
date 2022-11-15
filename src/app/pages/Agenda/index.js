@@ -7,6 +7,7 @@ import Paper from '@material-ui/core/Paper';
 
 export function Agenda() {
     const loading = useSelector(state => state.app.is_schedules_loading);
+    const [filterCourtServices, setFilterCourtServices] = useState({services_ids: []});
 
     return (
         <BlockUi tag="div" blocking={loading}>
@@ -16,10 +17,10 @@ export function Agenda() {
                 <BlockUi tag="div" blocking={loading}>
                     <div className="row">
                         <div className="col-md-3">
-                            <Filters />
+                            <Filters filterCourtServices={filterCourtServices} setFilterCourtServices={setFilterCourtServices} />
                         </div>
                         <div className="col-md-9">
-                            <MyScheduler />
+                            <MyScheduler filterCourtServices={filterCourtServices} />
                         </div>
                     </div>
                 </BlockUi>

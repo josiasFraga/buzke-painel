@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { Fragment, useState, useEffect } from "react";
 import { useSelector, useDispatch } from 'react-redux';
 import { Scheduler } from "@aldabil/react-scheduler";
+
 import ptBR from 'date-fns/locale/pt-BR';
 import { 
     parseISO, 
-    add
  } from 'date-fns'
 
 const translations = {
@@ -29,16 +29,19 @@ const translations = {
     moreEvents: "Mais..."
 };
 
-export function MyScheduler() {
+export function MyScheduler(props) {
 
     const schedules = useSelector(state => state.app.schedules);
+    const my_courts_services = useSelector(state => state.app.courts_services);
 
     let schedulesToRender = [];
+    let _recources = [];
+
     let min_hour = 18;
     let max_hour = 5;
 
     Object.values(schedules).map((schedules_day)=>{
-        return schedules_day.map((schedule)=>{
+        return schedules_day.map((schedule, index)=>{
 
             const scheduling_time = schedule.horario;
             const time = scheduling_time.split(" ")[1];
@@ -56,17 +59,29 @@ export function MyScheduler() {
             }
 
             schedulesToRender.push({
-                event_id: schedule.id,
+                event_id: parseInt(index)+1,
+                internal_id: parseInt(schedule.id),
                 title: schedule.name + " " + schedule.usuario,
                 start: parseISO(schedule.horario),
                 end: scheduling_end,
-                admin_id: schedule.admin_id,
-                dispatchEvent: schedule.status != "confirmed",
+                //dispatchEvent: schedule.status != "confirmed",
                 editable: schedule.status == "confirmed",
-                color: schedule.service_color
+                admin_id: parseInt(schedule.admin_id),
             });
 
         });
+    });
+
+    Object.values(my_courts_services).map((court_service)=>{
+        if ( props.filterCourtServices.services_ids.indexOf(court_service.ClienteServico.id) > -1 ) {
+            _recources.push({
+                admin_id: parseInt(court_service.ClienteServico.id),
+                title: court_service.ClienteServico.nome,
+                subtitle: court_service.ClienteServico.valor,
+                avatar: court_service.ClienteServico.nome,
+                color: court_service.ClienteServico.cor,
+            });
+        }
     });
 
     if ( min_hour > max_hour ) {
@@ -76,59 +91,42 @@ export function MyScheduler() {
 
     if ( schedulesToRender.length == 0 ) {
         return false
-
     }
 
     return (
-        <Scheduler
-        draggable={false}
-        deletable={false}
-        translations={translations}
-        hourFormat={"24"}
-        events={schedulesToRender}
-        locale={ptBR}
-        view={"day"}
-        height={800}
-        day={{
-            startHour: min_hour, 
-            endHour: max_hour, 
-            step: 60, 
-        }}
-        week={{
-            weekDays: [0, 1, 2, 3, 4, 5], 
-            weekStartOn: 6, 
-            startHour: min_hour, 
-            endHour: max_hour, 
-            step: 60, 
-        }}
-        fields={[
-            {
-            name: "user_id",
-            type: "select",
-            // Should provide options with type:"select"
-            options: [
-                { id: 1, text: "John", value: 1 },
-                { id: 2, text: "Mark", value: 2 }
-            ],
-            config: { label: "User", required: true, errMsg: "Plz Select User" }
-            },
-            {
-            name: "Description",
-            type: "input",
-            default: "Default Value...",
-            config: { label: "Details", multiline: true, rows: 4 }
-            },
-            {
-            name: "anotherdate",
-            type: "date",
-            config: {
-                label: "Other Date",
-                md: 6,
-                modalVariant: "dialog",
-                type: "datetime"
-            }
-            }
-        ]}
-        />
+        <Fragment>
+            <Scheduler
+            draggable={false}
+            deletable={false}
+            translations={translations}
+            //events={EVENTS}
+            events={schedulesToRender}
+            resources={_recources}
+            resourceFields={{
+              idField: "admin_id",
+              textField: "title",
+              subTextField: "subtitle",
+              avatarField: "avatar",
+              colorField: "color"
+            }}
+            resourceViewMode={"default"}
+            hourFormat={"24"}
+            locale={ptBR}
+            view={"day"}
+            height={800}
+            day={{
+                startHour: min_hour, 
+                endHour: max_hour, 
+                step: 60, 
+            }}
+            week={{
+                weekDays: [0, 1, 2, 3, 4, 5], 
+                weekStartOn: 6, 
+                startHour: min_hour, 
+                endHour: max_hour, 
+                step: 60, 
+            }}
+            />
+        </Fragment>
     );
 }
