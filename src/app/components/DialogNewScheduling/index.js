@@ -23,7 +23,8 @@ export default function DialogNewScheduling(props) {
             dateString: ""
         },
         horaSelecionada: {
-            horario: ""
+            horario: "",
+            duracao: ""
         },
         servico: ""
     };

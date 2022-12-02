@@ -35,8 +35,9 @@ export function FormNewScheduling(props) {
                 return aval.horario == formik.values.horaSelecionada.horario;
             });
 
-            const servicos_desativar = hora_selecionada[0].servicos_desativar;
+            formik.setFieldValue("hora_selecionada.duracao", hora_selecionada[0].duracao);
 
+            const servicos_desativar = hora_selecionada[0].servicos_desativar;
 
             if ( servicos_desativar.length > 0 ) {
                 const my_cs = my_courts_services.map((court_service)=>{
