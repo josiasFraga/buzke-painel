@@ -1,21 +1,15 @@
-import React, { useState, useEffect } from "react";
-import { useSelector, useDispatch } from 'react-redux';
+import React, { useEffect } from "react";
+import { useSelector } from 'react-redux';
 import PickerClientes from "../../../components/Forms/Components/Pickers/Clientes";
 import Form from 'react-bootstrap/Form';
 
 export function Filters(props) {
 
-    const dispatch = useDispatch();
-
-    const [filterClient, setFilterClient] = useState("");
-    const filterCourtServices = props.filterCourtServices;
-    const setFilterCourtServices = props.setFilterCourtServices;
-
     const my_courts_services = useSelector(state => state.app.courts_services);
-
-    useEffect(() => {
-        dispatch({type: 'LOAD_COURTS_SERVICES', payload: {params: {tipo: "meus"}}});
-    }, []);
+    const setFilterCourtServices = props.setFilterCourtServices;
+    const filterCourtServices = props.filterCourtServices;
+    const setFilterClient = props.setFilterClient;
+    const filterClient = props.filterClient;
 
     useEffect(() => {
         if (my_courts_services.length > 0) {
@@ -26,11 +20,6 @@ export function Filters(props) {
             setFilterCourtServices({services_ids: ids});
         }
     }, [my_courts_services]);
-
-    useEffect(() => {
-        dispatch({type: 'LOAD_SCHEDULES', payload: {params: {type: 1, data: "2022-11-01", cliente_cliente_id: filterClient, ...filterCourtServices}}});
-
-    }, [filterCourtServices, filterClient]);
 
 
     return (

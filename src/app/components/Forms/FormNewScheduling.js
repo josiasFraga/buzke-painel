@@ -16,6 +16,7 @@ export function FormNewScheduling(props) {
     const formik = props.formik;
     const available_schedules = useSelector(state => state.app.available_schedules);
     const my_courts_services = useSelector(state => state.app.courts_services);
+    const business_configs = useSelector((state) => state.app.business_configs);
     const [radiosCourtsServices, setRadiosCourtsServices] = useState([]);
 
     useEffect(() => {
@@ -35,7 +36,7 @@ export function FormNewScheduling(props) {
                 return aval.horario == formik.values.horaSelecionada.horario;
             });
 
-            formik.setFieldValue("hora_selecionada.duracao", hora_selecionada[0].duracao);
+            formik.setFieldValue("horaSelecionada.duracao", hora_selecionada[0].duracao);
 
             const servicos_desativar = hora_selecionada[0].servicos_desativar;
 
@@ -60,6 +61,7 @@ export function FormNewScheduling(props) {
 
     useEffect(() => {
         dispatch({type: 'LOAD_COURTS_SERVICES', payload: {params: {tipo: "meus"}}});
+        dispatch({type: 'LOAD_BUSINESS_CONFIGS', payload: {params: {}}});
     }, []);
     
     return (
@@ -141,13 +143,13 @@ export function FormNewScheduling(props) {
                         radiosCourtsServices.map((court_service, index)=>{
                             return (
                                 <Form.Check
-                                key={index}
-                                id={"radio_servico_" + index}
-                                bsCustomPrefix
-                                //custom
-                                disabled={court_service.ClienteServico.disabled}
-                                className="mb-2"
-                                type="radio"
+                                    key={index}
+                                    id={"radio_servico_" + index}
+                                    bsCustomPrefix
+                                    //custom
+                                    disabled={court_service.ClienteServico.disabled}
+                                    className="mb-2"
+                                    type="radio"
                                 >
                                     <Form.Check.Input 
                                         value={court_service.ClienteServico.id}
@@ -176,6 +178,30 @@ export function FormNewScheduling(props) {
                         {formik.errors.servico && formik.touched.servico && <label className="invalid-feedback d-block">{formik.errors.servico}</label>}
                     </div>
                 </div>
+
+                {
+                    business_configs.horario_fixo == "Y" &&
+                    <div className="col-xl-12 col-md-12 mb-8">
+                        <label className="form-label">Horário Fixo?</label>
+                        <Form.Check 
+                            type={"checkbox"}
+                            id={`fixo`}
+                            label={`Sim`}
+                            onChange={(evt)=>{
+                                if ( evt.target.checked ) {
+                                    formik.setFieldValue("fixo", 
+                                        "true"
+                                    );
+                                } else {
+
+                                    formik.setFieldValue("fixo", 
+                                        "false"
+                                    );
+                                }
+                            }}
+                        />
+                    </div>
+                }
             </div>
         </BlockUi>
     );

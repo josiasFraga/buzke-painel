@@ -8,8 +8,11 @@ import DialogNewScheduling from "../../components/DialogNewScheduling";
 
 export function Agenda() {
 
+    const dispatch = useDispatch();
+
     const loading = useSelector(state => state.app.is_schedules_loading);
     const [filterCourtServices, setFilterCourtServices] = useState({services_ids: []});
+    const [filterClient, setFilterClient] = useState("");
     const [schedulerView, setSchedulerView] = useState("default");
     const [dataSchedulingToEdit, setDataSchedulingToEdit] = React.useState(false);
     const [open, setOpen] = React.useState(false);
@@ -22,15 +25,27 @@ export function Agenda() {
         setOpen(false);
     }
 
+    const loadSchedules = () => {
+        dispatch({type: 'LOAD_SCHEDULES', payload: {params: {type: 1, data: "2022-12-01", cliente_cliente_id: filterClient, ...filterCourtServices}}});
+    }
+
+    useEffect(() => {
+        loadSchedules();
+    }, [filterCourtServices, filterClient]);
+
+    useEffect(() => {
+        dispatch({type: 'LOAD_COURTS_SERVICES', payload: {params: {tipo: "meus"}}});
+    }, []);
+
     return (
         <>
-        <DialogNewScheduling 
-          open={open}
-          handleClose={handleClose}
-          dataClientToEdit={dataSchedulingToEdit}
-          setDataClientToEdit={setDataSchedulingToEdit}
-        />
-        <BlockUi tag="div" blocking={loading}>
+            <DialogNewScheduling 
+                open={open}
+                handleClose={handleClose}
+                dataClientToEdit={dataSchedulingToEdit}
+                setDataClientToEdit={setDataSchedulingToEdit}
+                loadSchedules={loadSchedules}
+            />
 
             <div className="row">
                 <div className="col-md-6">
@@ -50,6 +65,8 @@ export function Agenda() {
                                 setFilterCourtServices={setFilterCourtServices}
                                 schedulerView={schedulerView}
                                 setSchedulerView={setSchedulerView}
+                                filterClient={filterClient}
+                                setFilterClient={setFilterClient}
                             />
                         </div>
                         <div className="col-md-9">
@@ -61,7 +78,6 @@ export function Agenda() {
                     </div>
                 </BlockUi>
             </Paper>
-        </BlockUi>
         </>
     );
 }

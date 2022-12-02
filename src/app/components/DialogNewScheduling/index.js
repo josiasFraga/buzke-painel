@@ -16,6 +16,7 @@ export default function DialogNewScheduling(props) {
     const open = props.open;
     const handleClose = props.handleClose;
     const dataToEdit = props.dataClientToEdit;
+    const loadSchedules = props.loadSchedules;
 
     const initialState = {
         client_client_id: "",
@@ -26,7 +27,8 @@ export default function DialogNewScheduling(props) {
             horario: "",
             duracao: ""
         },
-        servico: ""
+        servico: "",
+        fixo: "false",
     };
 
     const [initialValues, setInitialValues] = useState(initialState);
@@ -62,7 +64,7 @@ export default function DialogNewScheduling(props) {
         onSubmit: (values, {setSubmitting, resetForm}) => {
 
             try {
-                dispatch({type: 'SAVE_CUSTOMER', payload: {
+                dispatch({type: 'SAVE_SCHEDULING', payload: {
                     submitValues: {
                         ...values,
                         //id: clienteId
@@ -73,12 +75,7 @@ export default function DialogNewScheduling(props) {
                             values: initialValues,
                         });
 
-                        dispatch({
-                            type: 'LOAD_ADDRESS_BY_POSTAL_CODE',
-                            payload: null
-                        });
-
-                        dispatch({type: 'LOAD_CUSTOMERS', payload: {}});
+                        loadSchedules();
 
                         handleClose();
                     }
@@ -100,13 +97,7 @@ export default function DialogNewScheduling(props) {
                 horario: yup.string().required("Selecione o horário do agendamento antes de continuar"),
             }),
             servico: yup.number().required("Selecione um cliente antes de continuar"),
-            lado: yup
-            .string()
-            .when("dados_padelista", {
-                is: true,
-                then: yup.string().required("Selecione o lado que o padelista prefere jogar")
-            }),
-        }, ['dados_padelista'])
+        })
     });
 
     useEffect(() => {

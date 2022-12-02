@@ -510,6 +510,9 @@ const INITIAL_STATE = {
 
     available_schedules: [],
     is_available_schedules_loading: false,
+
+    business_configs: {},
+    is_business_configs_loading: false
 };
 
 export const reducer = (state = INITIAL_STATE, action) => {
@@ -844,6 +847,12 @@ export const reducer = (state = INITIAL_STATE, action) => {
             return { ...state, available_schedules: action.payload, is_available_schedules_loading: false }
         case 'LOAD_AVAILABLE_SCHEDULES_FAILED':
             return { ...state, available_schedules: INITIAL_STATE.cities, is_available_schedules_loading: false }
+        case 'LOAD_BUSINESS_CONFIGS':
+            return { ...state, business_configs: INITIAL_STATE.business_configs, is_busi: true }
+        case 'LOAD_BUSINESS_CONFIGS_SUCCESS':
+            return { ...state, business_configs: action.payload, is_available_schedules_loading: false }
+        case 'LOAD_BUSINESS_CONFIGS_FAILED':
+            return { ...state, business_configs: INITIAL_STATE.business_configs, is_busi: false }
 
         default:
             return state;
@@ -1613,6 +1622,44 @@ function* loadAvailableSchedules({payload}) {
     }
 }
 
+function* loadBusinessConfigs({payload}) {
+    try {
+        const response = yield axios.get(process.env.REACT_APP_API_URL + `/clientes/dados`, payload);
+        yield put({type: 'LOAD_BUSINESS_CONFIGS_SUCCESS', payload: response.data.dados.ClienteConfiguracao});
+    } catch (e) {
+        yield put({type: 'LOAD_BUSINESS_CONFIGS_FAILED'});
+    }
+}
+
+function* saveScheduling({payload}) {
+    try {
+
+        let url = process.env.REACT_APP_API_URL + `/agendamentos/cadastrar`;
+        let msg_success = "Agendamento salvo com sucesso!";
+
+        if ( payload.submitValues.id && payload.submitValues.id != "" ) {
+            url = process.env.REACT_APP_API_URL + `/agendamentos/alterar`;
+            msg_success = "Agendamento atualizado com sucesso!";
+        }
+
+        const response = yield axios.post(url, payload.submitValues, {
+            headers: {
+                'content-type': 'application/x-www-form-urlencoded',
+                'Accept': 'application/json',
+            }
+        });
+
+        payload.setSubmitting(false);
+        toast.success(msg_success);
+        payload.callback();
+
+    } catch (e) {
+        console.log(e);
+        toast.error("Ocorreu um erro ao salvar o agendamento, tente novamente.");
+        payload.setSubmitting(false);
+    }
+}
+
 export function* saga() {
     yield takeLatest('ACTIVATE_ACCOUNT', activateAccount);
     yield takeLatest('LOAD_CARDS', loadCards);
@@ -1667,7 +1714,9 @@ export function* saga() {
 
     yield takeLatest('LOAD_COURTS_SERVICES', loadCourtServices);
     yield takeLatest('LOAD_AVAILABLE_SCHEDULES', loadAvailableSchedules);
+    yield takeLatest('LOAD_BUSINESS_CONFIGS', loadBusinessConfigs);
 
     yield takeLatest('LOAD_SCHEDULES', loadSchedules);
+    yield takeLatest('SAVE_SCHEDULING', saveScheduling);
     
 }

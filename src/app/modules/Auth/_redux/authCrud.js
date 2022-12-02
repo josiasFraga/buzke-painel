@@ -4,7 +4,7 @@ export const LOGIN_URL = process.env.REACT_APP_API_URL + "/usuarios/login";
 export const REGISTER_URL = process.env.REACT_APP_API_URL + "/auth/register";
 export const REQUEST_PASSWORD_URL = process.env.REACT_APP_API_URL + "/auth/forgot-password";
 
-export const ME_URL = process.env.REACT_APP_API_URL + "/me";
+export const ME_URL = process.env.REACT_APP_API_URL + "/clientes/dados";
 
 export function login(email, password) {
 
