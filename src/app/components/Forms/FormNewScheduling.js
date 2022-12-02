@@ -12,10 +12,50 @@ import BlockUi from 'react-block-ui';
 export function FormNewScheduling(props) {
 
     const dispatch = useDispatch();
+
     const formik = props.formik;
     const available_schedules = useSelector(state => state.app.available_schedules);
-
     const my_courts_services = useSelector(state => state.app.courts_services);
+    const [radiosCourtsServices, setRadiosCourtsServices] = useState([]);
+
+    useEffect(() => {
+        if ( my_courts_services.length > 0 ) {
+            setRadiosCourtsServices(my_courts_services.map((mcs) => {
+                mcs.ClienteServico.disabled = false;
+                return mcs;
+            }));
+        }
+    }, [my_courts_services]);
+
+    useEffect(() => {
+
+        if (formik.values.horaSelecionada.horario != "") {
+
+            let hora_selecionada = available_schedules.filter((aval) => {
+                return aval.horario == formik.values.horaSelecionada.horario;
+            });
+
+            const servicos_desativar = hora_selecionada[0].servicos_desativar;
+
+
+            if ( servicos_desativar.length > 0 ) {
+                const my_cs = my_courts_services.map((court_service)=>{
+                    court_service.ClienteServico.disabled = servicos_desativar.indexOf(court_service.ClienteServico.id) > -1;
+                    return court_service;
+                });
+
+                setRadiosCourtsServices(my_cs);
+            } else {
+
+                setRadiosCourtsServices(my_courts_services.map((mcs) => {
+                    mcs.ClienteServico.disabled = false;
+                    return mcs;
+                }));
+            }
+        
+            formik.setFieldValue("servico","");
+        }
+    }, [formik.values.horaSelecionada]);
 
     useEffect(() => {
         dispatch({type: 'LOAD_COURTS_SERVICES', payload: {params: {tipo: "meus"}}});
@@ -50,6 +90,7 @@ export function FormNewScheduling(props) {
                 </div>
 
                 <div className="col-xl-12 col-md-12 mb-8">
+                    <label className="form-label">Horario</label>
                     <div className="row">
                     {available_schedules.map((aval, index)=>{
                         return (
@@ -68,6 +109,7 @@ export function FormNewScheduling(props) {
                                 id={"radio_horario_" + index}
                                 custom
                                 checked={formik.values.horaSelecionada && formik.values.horaSelecionada.horario == aval.horario}
+                                disabled={!aval.enabled}
                                 style={{
                                     paddingLeft: "10px", 
                                     paddingRight: "10px", 
@@ -90,39 +132,48 @@ export function FormNewScheduling(props) {
                             {formik.errors.horaSelecionada && formik.errors.horaSelecionada.horario && <label className="invalid-feedback d-block">{formik.errors.horaSelecionada.horario}</label>}
                         </div>
                     </div>
+                </div>
 
-                    <div className="col-md-12 mb-4">
-                        <label className="form-label">Quadra/Serviço</label>
-                        {
-                            my_courts_services.map((court_service, index)=>{
-                                return (
-                                    <Form.Check
-                                    key={index}
-                                    id={court_service.ClienteServico.id}
-                                    bsCustomPrefix
-                                    //custom
-                                    className="mb-2"
-                                    type="switch"
-                                    >
-                                        <Form.Check.Input 
-                                            value={court_service}
-                                            name="court_service[]"
-                                            checked={false}
-                                            onChange={(e)=>{
-                                                
-                                            }}
-                                        />
-                                        <Form.Check.Label>
-                                            <div className="check-filter-service-color" style={{ backgroundColor: court_service.ClienteServico.cor }}></div>
-                                            {court_service.ClienteServico.nome}
-                                        </Form.Check.Label>
-                                    </Form.Check>
-                                )
-                            })
-                        }
+                <div className="col-xl-12 col-md-12 mb-8">
+                    <label className="form-label">Quadra/Serviço</label>
+                    {
+                        radiosCourtsServices.map((court_service, index)=>{
+                            return (
+                                <Form.Check
+                                key={index}
+                                id={"radio_servico_" + index}
+                                bsCustomPrefix
+                                //custom
+                                disabled={court_service.ClienteServico.disabled}
+                                className="mb-2"
+                                type="radio"
+                                >
+                                    <Form.Check.Input 
+                                        value={court_service.ClienteServico.id}
+                                        name="servico"
+                                        type="radio"
+                                        disabled={court_service.ClienteServico.disabled}
+                                        checked={formik.values.servico == court_service.ClienteServico.id}
+                                        onChange={(evt)=>{
+                                            
+                                            if ( evt.target.checked ) {
+                                                formik.setFieldValue("servico", 
+                                                court_service.ClienteServico.id
+                                                );
+                                            }
+                                        }}
+                                    />
+                                    <Form.Check.Label>
+                                        <div className="check-filter-service-color" style={{ backgroundColor: court_service.ClienteServico.cor }}></div>
+                                        {court_service.ClienteServico.nome}
+                                    </Form.Check.Label>
+                                </Form.Check>
+                            )
+                        })
+                    }
+                    <div className="col-md-12">
+                        {formik.errors.servico && formik.touched.servico && <label className="invalid-feedback d-block">{formik.errors.servico}</label>}
                     </div>
-
-                    
                 </div>
             </div>
         </BlockUi>
