@@ -512,7 +512,10 @@ const INITIAL_STATE = {
     is_available_schedules_loading: false,
 
     business_configs: {},
-    is_business_configs_loading: false
+    is_business_configs_loading: false,
+
+    scheduling_data: {},
+    is_scheduling_data_loading: false
 };
 
 export const reducer = (state = INITIAL_STATE, action) => {
@@ -848,11 +851,18 @@ export const reducer = (state = INITIAL_STATE, action) => {
         case 'LOAD_AVAILABLE_SCHEDULES_FAILED':
             return { ...state, available_schedules: INITIAL_STATE.cities, is_available_schedules_loading: false }
         case 'LOAD_BUSINESS_CONFIGS':
-            return { ...state, business_configs: INITIAL_STATE.business_configs, is_busi: true }
+            return { ...state, business_configs: INITIAL_STATE.business_configs, is_business_configs_loading: true }
         case 'LOAD_BUSINESS_CONFIGS_SUCCESS':
-            return { ...state, business_configs: action.payload, is_available_schedules_loading: false }
+            return { ...state, business_configs: action.payload, is_business_configs_loading: false }
         case 'LOAD_BUSINESS_CONFIGS_FAILED':
-            return { ...state, business_configs: INITIAL_STATE.business_configs, is_busi: false }
+            return { ...state, business_configs: INITIAL_STATE.business_configs, is_business_configs_loading: false }
+        case 'LOAD_SCHEDULING_DATA':
+            return { ...state, scheduling_data: INITIAL_STATE.scheduling_data, is_scheduling_data_loading: true }
+        case 'LOAD_SCHEDULING_DATA_SUCCESS':
+            return { ...state, scheduling_data: action.payload, is_scheduling_data_loading: false }
+        case 'LOAD_SCHEDULING_DATA_FAILED':
+            return { ...state, scheduling_data: action.payload, is_scheduling_data_loading: false }
+            
 
         default:
             return state;
@@ -1660,6 +1670,19 @@ function* saveScheduling({payload}) {
     }
 }
 
+function* loadSchedulingData({payload}) {
+    try {
+        if ( payload.reset ) {
+            yield put({type: 'LOAD_SCHEDULING_DATA_SUCCESS', payload: {}});
+            return false;
+        }
+        const response = yield axios.get(process.env.REACT_APP_API_URL + `/agendamentos/index`, payload);
+        yield put({type: 'LOAD_SCHEDULING_DATA_SUCCESS', payload: response.data.dados});
+    } catch (e) {
+        yield put({type: 'LOAD_SCHEDULING_DATA_FAILED'});
+    }
+}
+
 export function* saga() {
     yield takeLatest('ACTIVATE_ACCOUNT', activateAccount);
     yield takeLatest('LOAD_CARDS', loadCards);
@@ -1717,6 +1740,7 @@ export function* saga() {
     yield takeLatest('LOAD_BUSINESS_CONFIGS', loadBusinessConfigs);
 
     yield takeLatest('LOAD_SCHEDULES', loadSchedules);
+    yield takeLatest('LOAD_SCHEDULING_DATA', loadSchedulingData);
     yield takeLatest('SAVE_SCHEDULING', saveScheduling);
     
 }

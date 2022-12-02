@@ -14,15 +14,17 @@ export function Agenda() {
     const [filterCourtServices, setFilterCourtServices] = useState({services_ids: []});
     const [filterClient, setFilterClient] = useState("");
     const [schedulerView, setSchedulerView] = useState("default");
-    const [dataSchedulingToEdit, setDataSchedulingToEdit] = React.useState(false);
     const [open, setOpen] = React.useState(false);
+    const [dataToView, setDataToView] = React.useState(null);
 
     const handleClickNew = () => {
         setOpen(true);
     }
 
     const handleClose = () => {
+        setDataToView(null);
         setOpen(false);
+        dispatch({type: 'LOAD_SCHEDULING_DATA', payload: {reset: true}});
     }
 
     const loadSchedules = () => {
@@ -34,7 +36,14 @@ export function Agenda() {
     }, [filterCourtServices, filterClient]);
 
     useEffect(() => {
+        if ( dataToView != null ) {
+            setOpen(true);
+        }
+    }, [dataToView]);
+
+    useEffect(() => {
         dispatch({type: 'LOAD_COURTS_SERVICES', payload: {params: {tipo: "meus"}}});
+        dispatch({type: 'LOAD_BUSINESS_CONFIGS', payload: {params: {}}});
     }, []);
 
     return (
@@ -42,8 +51,7 @@ export function Agenda() {
             <DialogNewScheduling 
                 open={open}
                 handleClose={handleClose}
-                dataClientToEdit={dataSchedulingToEdit}
-                setDataClientToEdit={setDataSchedulingToEdit}
+                dataToView={dataToView}
                 loadSchedules={loadSchedules}
             />
 
@@ -73,6 +81,7 @@ export function Agenda() {
                             <MyScheduler 
                                 filterCourtServices={filterCourtServices}
                                 schedulerView={schedulerView}
+                                setDataToView={setDataToView}
                             />
                         </div>
                     </div>

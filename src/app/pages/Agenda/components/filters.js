@@ -39,8 +39,8 @@ export function Filters(props) {
                     my_courts_services.map((court_service, index)=>{
                         return (
                             <Form.Check
-                            key={index}
-                            id={court_service.ClienteServico.id}
+                            key={"radio_filtro_servico_" + index}
+                            id={"radio_filtro_servico_" + court_service.ClienteServico.id}
                             bsCustomPrefix
                             //custom
                             className="mb-2"

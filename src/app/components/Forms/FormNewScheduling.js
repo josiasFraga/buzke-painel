@@ -30,7 +30,7 @@ export function FormNewScheduling(props) {
 
     useEffect(() => {
 
-        if (formik.values.horaSelecionada.horario != "") {
+        if (formik.values.horaSelecionada.horario != "" && !formik.values.id) {
 
             let hora_selecionada = available_schedules.filter((aval) => {
                 return aval.horario == formik.values.horaSelecionada.horario;
@@ -59,10 +59,6 @@ export function FormNewScheduling(props) {
         }
     }, [formik.values.horaSelecionada]);
 
-    useEffect(() => {
-        dispatch({type: 'LOAD_COURTS_SERVICES', payload: {params: {tipo: "meus"}}});
-        dispatch({type: 'LOAD_BUSINESS_CONFIGS', payload: {params: {}}});
-    }, []);
     
     return (
         <BlockUi tag="div" blocking={formik.isSubmitting}>
@@ -74,7 +70,6 @@ export function FormNewScheduling(props) {
                         type="date"
                         name="day.dateString"
                         min={new Date().toISOString().split('T')[0]}
-                        autoFocus
                         className={"form-control " + (formik.errors.day && formik.errors.day.dateString && formik.touched.day && formik.touched.day.dateString ? 'is-invalid' : '')}
                         value={formik.values.day.dateString}
                         onChange={(evt) => {
@@ -98,7 +93,7 @@ export function FormNewScheduling(props) {
                     {available_schedules.map((aval, index)=>{
                         return (
                         <div className="col-md-2 col-sm-3" 
-                        key={index}>
+                        key={"available_" + index}>
                         <div className="mb-4" style={{
                                 backgroundColor: "#f7f7f7", 
                                 width: "100%", 

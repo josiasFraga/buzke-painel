@@ -15,8 +15,9 @@ export default function DialogNewScheduling(props) {
 
     const open = props.open;
     const handleClose = props.handleClose;
-    const dataToEdit = props.dataClientToEdit;
+    const dataToView = props.dataToView;
     const loadSchedules = props.loadSchedules;
+    const data = useSelector(state => state.app.scheduling_data);
 
     const initialState = {
         client_client_id: "",
@@ -34,29 +35,41 @@ export default function DialogNewScheduling(props) {
     const [initialValues, setInitialValues] = useState(initialState);
 
     useEffect(() => {
-        if ( dataToEdit !== false ) {
-            setInitialValues({
-                id: dataToEdit.ClienteCliente.id,
-                nacionalidade: dataToEdit.ClienteCliente.nacionalidade,
-                pais: dataToEdit.ClienteCliente.pais,
-                telefone_ddi: dataToEdit.ClienteCliente.telefone_ddi,
-                telefone: dataToEdit.ClienteCliente.telefone,
-                uf: dataToEdit.Uf.ufe_sg,
-                localidade: dataToEdit.Localidade.loc_no,
-                bairro: dataToEdit.ClienteCliente.bairro,
-                nome: dataToEdit.ClienteCliente.nome,
-                email_cliente: dataToEdit.ClienteCliente.email_cliente,
-                dados_padelista: false,
-                sexo: dataToEdit.ClienteCliente.sexo,
-                endereco: dataToEdit.ClienteCliente.endereco,
-                n: dataToEdit.ClienteCliente.n,
-                cpf: dataToEdit.ClienteCliente.cpf,
-                cep: dataToEdit.ClienteCliente.cep
-            });
+
+        if ( dataToView != null ) {
+            dispatch({type: 'LOAD_SCHEDULING_DATA', payload: {params: {
+                agendamento_id: dataToView.id,
+                horario: dataToView.horario
+            }}});
+
+        }
+
+    }, [dataToView]);
+
+    useEffect(() => {
+
+        if ( data && data.Agendamento ) {
+            const newInitialValues = {
+                id: data.Agendamento.id,
+                client_client_id: data.Agendamento.cliente_cliente_id,
+                day: {
+                    dateString: data.Agendamento.horario.split(" ")[0]
+                },
+                horaSelecionada: {
+                    horario: data.Agendamento.horario.split(" ")[1],
+                    duracao: data.Agendamento.duracao
+                },
+                servico: data.Agendamento.servico_id,
+                fixo: data.Agendamento.tipo == "fixo" ? "true" : "false",
+            };
+
+            setInitialValues(newInitialValues);
         } else {
             setInitialValues(initialState);
+
         }
-    }, [dataToEdit]);
+
+    }, [data]);
 
     const formik = useFormik({
         enableReinitialize: true,
@@ -112,9 +125,9 @@ export default function DialogNewScheduling(props) {
         </DialogContent>
         <DialogActions>
         <Button onClick={handleClose} color="primary">
-            Cancelar
+            Fechar
         </Button>
-        <Button onClick={formik.handleSubmit} color="primary">
+        <Button onClick={formik.handleSubmit} disabled={formik.values.id} color="primary">
             Cadastrar
         </Button>
         </DialogActions>

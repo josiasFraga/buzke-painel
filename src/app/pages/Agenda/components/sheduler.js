@@ -1,9 +1,9 @@
-import React, { Fragment, useState, useEffect } from "react";
-import { useSelector, useDispatch } from 'react-redux';
+import React, { Fragment } from "react";
+import { useSelector } from 'react-redux';
 import { Scheduler } from "@aldabil/react-scheduler";
 import { Button } from "@mui/material";
-import EditIcon from '@material-ui/icons/Edit';
 import { makeStyles } from '@material-ui/core/styles';
+import { format } from 'date-fns'
 
 import ptBR from 'date-fns/locale/pt-BR';
 import { 
@@ -62,8 +62,11 @@ export function MyScheduler(props) {
     let min_hour = 18;
     let max_hour = 5;
 
-    const handleClickEdit = (event_id) => {
-        alert(event_id);
+    const handleClickEdit = (event_id, horario) => {
+        props.setDataToView({
+          id: event_id,
+          horario: horario
+        });
     }
 
     Object.values(schedules).map((schedules_day)=>{
@@ -217,10 +220,10 @@ export function MyScheduler(props) {
                         variant="contained" 
                         className={classes.buttonEdit}
                         onClick={()=> {
-                            handleClickEdit(event.internal_id)
+                            handleClickEdit(event.internal_id, format(event.start, 'yyyy-MM-dd HH:mm:ss'))
                         }}
                     >
-                        <EditIcon />
+                        VISUALIZAR
                     </Button>
                     
                   </div>
