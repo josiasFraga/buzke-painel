@@ -507,6 +507,9 @@ const INITIAL_STATE = {
 
     schedules: [],
     is_schedules_loading: false,
+
+    available_schedules: [],
+    is_available_schedules_loading: false,
 };
 
 export const reducer = (state = INITIAL_STATE, action) => {
@@ -835,6 +838,12 @@ export const reducer = (state = INITIAL_STATE, action) => {
             return { ...state, schedules: action.payload, is_schedules_loading: false }
         case 'LOAD_SCHEDULES_FAILED':
             return { ...state, schedules: INITIAL_STATE.cities, is_schedules_loading: false }
+        case 'LOAD_AVAILABLE_SCHEDULES':
+            return { ...state, available_schedules: INITIAL_STATE.schedules, is_available_schedules_loading: true }
+        case 'LOAD_AVAILABLE_SCHEDULES_SUCCESS':
+            return { ...state, available_schedules: action.payload, is_available_schedules_loading: false }
+        case 'LOAD_AVAILABLE_SCHEDULES_FAILED':
+            return { ...state, available_schedules: INITIAL_STATE.cities, is_available_schedules_loading: false }
 
         default:
             return state;
@@ -1591,6 +1600,18 @@ function* loadSchedules({payload}) {
     }
 }
 
+function* loadAvailableSchedules({payload}) {
+    try {
+        if ( payload.params.date == "" ) {
+            yield put({type: 'LOAD_AVAILABLE_SCHEDULES_SUCCESS', payload: []});
+            return false;
+        }
+        const response = yield axios.get(process.env.REACT_APP_API_URL + `/clientes/horariosDisponiveis`, payload);
+        yield put({type: 'LOAD_AVAILABLE_SCHEDULES_SUCCESS', payload: response.data.dados});
+    } catch (e) {
+        yield put({type: 'LOAD_AVAILABLE_SCHEDULES_FAILED'});
+    }
+}
 
 export function* saga() {
     yield takeLatest('ACTIVATE_ACCOUNT', activateAccount);
@@ -1645,6 +1666,7 @@ export function* saga() {
     yield takeLatest('DELETE_CUSTOMER', deleteCustomer);
 
     yield takeLatest('LOAD_COURTS_SERVICES', loadCourtServices);
+    yield takeLatest('LOAD_AVAILABLE_SCHEDULES', loadAvailableSchedules);
 
     yield takeLatest('LOAD_SCHEDULES', loadSchedules);
     

@@ -4,27 +4,64 @@ import BlockUi from 'react-block-ui';
 import { MyScheduler } from "./components/sheduler";
 import { Filters } from "./components/filters";
 import Paper from '@material-ui/core/Paper';
+import DialogNewScheduling from "../../components/DialogNewScheduling";
 
 export function Agenda() {
+
     const loading = useSelector(state => state.app.is_schedules_loading);
     const [filterCourtServices, setFilterCourtServices] = useState({services_ids: []});
+    const [schedulerView, setSchedulerView] = useState("default");
+    const [dataSchedulingToEdit, setDataSchedulingToEdit] = React.useState(false);
+    const [open, setOpen] = React.useState(false);
+
+    const handleClickNew = () => {
+        setOpen(true);
+    }
+
+    const handleClose = () => {
+        setOpen(false);
+    }
 
     return (
+        <>
+        <DialogNewScheduling 
+          open={open}
+          handleClose={handleClose}
+          dataClientToEdit={dataSchedulingToEdit}
+          setDataClientToEdit={setDataSchedulingToEdit}
+        />
         <BlockUi tag="div" blocking={loading}>
-            <h1 className="azul-cabecalho">Agenda</h1>
-            <p className="subheader-text mb-10">Gestão de Agendamentos </p>
+
+            <div className="row">
+                <div className="col-md-6">
+                    <h1 className="azul-cabecalho">Agenda</h1>
+                    <p className="subheader-text mb-10">Gestão de Agendamentos </p>
+                </div>
+                <div className="col-md-6 text-right">
+                    <button type="button" className="btn btn-primary mb-10 rightBtn" onClick={() => { handleClickNew() }}>NOVO AGENDAMENTO</button>
+                </div>
+            </div>
             <Paper sx={{ width: '100%', overflow: 'hidden' }}>
                 <BlockUi tag="div" blocking={loading}>
                     <div className="row">
                         <div className="col-md-3">
-                            <Filters filterCourtServices={filterCourtServices} setFilterCourtServices={setFilterCourtServices} />
+                            <Filters 
+                                filterCourtServices={filterCourtServices} 
+                                setFilterCourtServices={setFilterCourtServices}
+                                schedulerView={schedulerView}
+                                setSchedulerView={setSchedulerView}
+                            />
                         </div>
                         <div className="col-md-9">
-                            <MyScheduler filterCourtServices={filterCourtServices} />
+                            <MyScheduler 
+                                filterCourtServices={filterCourtServices}
+                                schedulerView={schedulerView}
+                            />
                         </div>
                     </div>
                 </BlockUi>
             </Paper>
         </BlockUi>
+        </>
     );
 }

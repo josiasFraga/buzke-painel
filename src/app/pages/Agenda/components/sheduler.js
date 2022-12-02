@@ -1,6 +1,9 @@
 import React, { Fragment, useState, useEffect } from "react";
 import { useSelector, useDispatch } from 'react-redux';
 import { Scheduler } from "@aldabil/react-scheduler";
+import { Button } from "@mui/material";
+import EditIcon from '@material-ui/icons/Edit';
+import { makeStyles } from '@material-ui/core/styles';
 
 import ptBR from 'date-fns/locale/pt-BR';
 import { 
@@ -28,8 +31,27 @@ const translations = {
     },
     moreEvents: "Mais..."
 };
+  
+const useStyles = makeStyles(theme => ({
+  buttonDelete: {
+    //margin: theme.spacing(1),
+    backgroundColor: "red",
+    color: "white",
+    padding: "6px 10px",
+    minWidth: 0
+  },
+  buttonEdit: {
+    //margin: theme.spacing(1),
+    backgroundColor: "silver",
+    color: "white",
+    padding: "6px 6px",
+    minWidth: 0
+  },
+}));
 
 export function MyScheduler(props) {
+
+    const classes = useStyles();
 
     const schedules = useSelector(state => state.app.schedules);
     const my_courts_services = useSelector(state => state.app.courts_services);
@@ -39,6 +61,10 @@ export function MyScheduler(props) {
 
     let min_hour = 18;
     let max_hour = 5;
+
+    const handleClickEdit = (event_id) => {
+        alert(event_id);
+    }
 
     Object.values(schedules).map((schedules_day)=>{
         return schedules_day.map((schedule, index)=>{
@@ -61,12 +87,13 @@ export function MyScheduler(props) {
             schedulesToRender.push({
                 event_id: parseInt(index)+1,
                 internal_id: parseInt(schedule.id),
-                title: schedule.name + " " + schedule.usuario,
+                title: schedule.usuario,
                 start: parseISO(schedule.horario),
                 end: scheduling_end,
-                //dispatchEvent: schedule.status != "confirmed",
-                editable: schedule.status == "confirmed",
+                disabled: schedule.status != "confirmed",
+                editable: false,
                 admin_id: parseInt(schedule.admin_id),
+                tipo: schedule.tipo_str,
             });
 
         });
@@ -109,15 +136,32 @@ export function MyScheduler(props) {
               avatarField: "avatar",
               colorField: "color"
             }}
-            resourceViewMode={"default"}
             hourFormat={"24"}
             locale={ptBR}
             view={"day"}
+            resourceViewMode={props.schedulerView}
             height={800}
             day={{
                 startHour: min_hour, 
                 endHour: max_hour, 
                 step: 60, 
+                cellRenderer: ({ disabled, onClick, ...props }) => {
+                    // Fake some condition up
+                    const restProps = disabled ? {} : props;
+                    return (
+                      <Button
+                        style={{
+                          cursor: "inherit"
+                        }}
+                        onClick={() => {
+                            return false;
+                        }}
+                        disableRipple={disabled}
+                        // disabled={disabled}
+                        {...restProps}
+                      ></Button>
+                    );
+                }
             }}
             week={{
                 weekDays: [0, 1, 2, 3, 4, 5], 
@@ -125,6 +169,62 @@ export function MyScheduler(props) {
                 startHour: min_hour, 
                 endHour: max_hour, 
                 step: 60, 
+                cellRenderer: ({ disabled, onClick, ...props }) => {
+                    // Fake some condition up
+                    const restProps = disabled ? {} : props;
+                    return (
+                      <Button
+                        style={{
+                          cursor: "inherit"
+                        }}
+                        onClick={() => {
+                            return false;
+                        }}
+                        disableRipple={disabled}
+                        // disabled={disabled}
+                        {...restProps}
+                      ></Button>
+                    );
+                }
+            }}
+            eventRenderer={({ disabled, start, end, title, onClick, ...props }) => {
+                const restProps = props;
+                  return (
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        justifyContent: "center",
+                        height: "100%"
+                      }}
+                    >
+                      <div className="font-weight-bold">{title}</div>
+                      <div>{start.toLocaleTimeString("pt-BR", { timeStyle: "short" })} - {end.toLocaleTimeString("pt-BR", { timeStyle: "short" })} ({restProps.tipo})</div>
+                    </div>
+                  );
+            }}
+            viewerExtraComponent={(fields, event) => {
+                return (
+                  <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    justifyContent: "end",
+                    alignContent: "flex-end",
+                    marginTop: 5
+                  }}>
+                    <Button 
+                        variant="contained" 
+                        className={classes.buttonEdit}
+                        onClick={()=> {
+                            handleClickEdit(event.internal_id)
+                        }}
+                    >
+                        <EditIcon />
+                    </Button>
+                    
+                  </div>
+                );
             }}
             />
         </Fragment>
