@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from 'react-redux';
 import BlockUi from 'react-block-ui';
-import { MyScheduler } from "./components/sheduler";
-import { Filters } from "./components/filters";
+import { MyScheduler } from "./components/MyScheduler";
+import { Filters } from "./components/Filters";
 import Paper from '@material-ui/core/Paper';
 import DialogNewScheduling from "../../components/DialogNewScheduling";
 
