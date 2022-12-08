@@ -32,6 +32,13 @@ export function Agenda() {
     }
 
     useEffect(() => {
+        const interval = setInterval(() => {
+            loadSchedules();
+        }, 60000);
+        return () => clearInterval(interval);
+      }, []);
+
+    useEffect(() => {
         loadSchedules();
     }, [filterCourtServices, filterClient]);
 

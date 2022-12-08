@@ -6,18 +6,17 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 
-export default function DialogConfirm(props) {
+export default function DialogConfirmCancelScheduling(props) {
 
  const setDialogOpen = props.setDialogOpen;
  const open = props.open;
- const id = props.id;
 
   function handleClose() {
     setDialogOpen(false);
   }
 
-  const handleConfirm = () => {
-    props.actionConfirm(id);
+  const handleConfirm = (tipo) => {
+    props.actionConfirm(tipo);
     handleClose();
   }
 
@@ -40,8 +39,11 @@ export default function DialogConfirm(props) {
           <Button onClick={handleClose} color="primary">
             Cancelar Ação
           </Button>
-          <Button onClick={handleConfirm} color="primary">
-            Confirmar
+          <Button onClick={() => { handleConfirm("") }} color="primary">
+            Cancelar este e os outros
+          </Button>
+          <Button onClick={() => { handleConfirm(1) }} color="primary">
+            Cancelar Apenas Este
           </Button>
         </DialogActions>
       </Dialog>

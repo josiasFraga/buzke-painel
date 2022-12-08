@@ -114,9 +114,9 @@ export function Clientes() {
       <DeleteDialogConfirm 
         open={openDialogExclusion} 
         setDialogOpen={setOpenDialogExclusion} 
-        idClientToDelete={idClientToDelete} 
+        id={idClientToDelete} 
         message={"Tem certeza que deseja fazer esta exclusão? Esta ação é irreversível."} 
-        actionExclusion={deleteItem}
+        actionConfirm={deleteItem}
       />
       <DialogNewCustomer 
         open={open}

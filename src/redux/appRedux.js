@@ -1621,7 +1621,7 @@ function* loadSchedules({payload}) {
 
 function* loadAvailableSchedules({payload}) {
     try {
-        if ( payload.params.date == "" ) {
+        if ( !payload.params.data || payload.params.data == "" ) {
             yield put({type: 'LOAD_AVAILABLE_SCHEDULES_SUCCESS', payload: []});
             return false;
         }
@@ -1683,6 +1683,30 @@ function* loadSchedulingData({payload}) {
     }
 }
 
+function* cancelScheduling({payload}) {
+    try {
+
+        let url = process.env.REACT_APP_API_URL + `/agendamentos/excluir`;
+        let msg_success = "Agendamento cancelado com sucesso!";
+
+
+        const response = yield axios.post(url, payload.submitValues, {
+            headers: {
+                'content-type': 'application/x-www-form-urlencoded',
+                'Accept': 'application/json',
+            }
+        });
+
+
+        toast.success(msg_success);
+        payload.callback();
+
+    } catch (e) {
+        console.log(e);
+        toast.error("Ocorreu um erro ao cancelar o agendamento, tente novamente.");
+    }
+}
+
 export function* saga() {
     yield takeLatest('ACTIVATE_ACCOUNT', activateAccount);
     yield takeLatest('LOAD_CARDS', loadCards);
@@ -1734,6 +1758,7 @@ export function* saga() {
     yield takeLatest('LOAD_ADDRESS_BY_POSTAL_CODE', loadAddressByPostalCode);
     yield takeLatest('SAVE_CUSTOMER', saveCustomer);
     yield takeLatest('DELETE_CUSTOMER', deleteCustomer);
+    yield takeLatest('CANCEL_SCHEDULING', cancelScheduling);
 
     yield takeLatest('LOAD_COURTS_SERVICES', loadCourtServices);
     yield takeLatest('LOAD_AVAILABLE_SCHEDULES', loadAvailableSchedules);

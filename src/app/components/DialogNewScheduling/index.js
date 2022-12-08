@@ -6,12 +6,19 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import { FormNewScheduling } from "../Forms/FormNewScheduling";
+import DialogCancelConfirm from "../DialogConfirm";
+import DialogCancelFixedConfirm from "../DialogConfirm/cancel_scheduling";
 import * as yup from 'yup';
 import {useFormik} from 'formik';
+import { useHistory } from "react-router-dom";
 
 export default function DialogNewScheduling(props) {
 
     const dispatch = useDispatch();
+    const history = useHistory()
+
+    const [openCancelConfirm, setOpenCancelConfirm] = React.useState(false);
+    const [openCancelFixedConfirm, setOpenCancelFixedConfirm] = React.useState(false);
 
     const open = props.open;
     const handleClose = props.handleClose;
@@ -117,19 +124,89 @@ export default function DialogNewScheduling(props) {
         dispatch({type: 'LOAD_AVAILABLE_SCHEDULES', payload: {params: { data: formik.values.day.dateString}}});
     }, [formik.values.day]);
 
+    const cancelSheduling = () => {
+
+        if ( data.Agendamento.cancelado == "Y" ) {
+            alert("Esse agendamento já foi cancelado!");
+            return false;
+        }
+
+        if ( data.Agendamento.torneio_id != null ) {
+            alert("Você não pode cancelar um agendamento de torneio!");
+            return false;
+        }
+
+        if ( data.Agendamento.tipo == "fixo" ) {
+            setOpenCancelFixedConfirm(true);
+            return false;
+        }
+
+        setOpenCancelConfirm(true);
+
+    }
+
+    const cancelShedulingTrigger = (tipo) => {
+
+        let params = {
+            agendamento_id: data.Agendamento.id,
+            horario: data.Agendamento.horario,
+        };
+
+        if ( tipo == 1 ) {
+            params.tipo = 1;
+        }
+
+        try {
+            dispatch({type: 'CANCEL_SCHEDULING', payload: {
+                submitValues: {
+                    ...params,
+                    //id: clienteId
+                },
+                callback: () => {
+                    history.go(0);
+                }
+            }});
+            
+        } catch(e) {
+            console.log(e);
+        }
+    }
+
     return (
     <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title" fullWidth={true}>
         <DialogTitle id="form-dialog-title">Novo Agendamento</DialogTitle>
         <DialogContent>
+
+            <DialogCancelConfirm
+                open={openCancelConfirm} 
+                setDialogOpen={setOpenCancelConfirm} 
+                id={""} 
+                message={"Tem certeza que deseja cancelar este agendamento? Esta ação é irreversível."} 
+                actionConfirm={cancelShedulingTrigger}
+            />
+
+            <DialogCancelFixedConfirm
+                open={openCancelFixedConfirm} 
+                setDialogOpen={setOpenCancelFixedConfirm} 
+                message={"Tem certeza que deseja cancelar este agendamento? Esta ação é irreversível."} 
+                actionConfirm={cancelShedulingTrigger}
+            />
+
             <FormNewScheduling formik={formik} />
         </DialogContent>
         <DialogActions>
         <Button onClick={handleClose} color="primary">
             Fechar
         </Button>
+        {formik.values.id && 
+        <Button onClick={cancelSheduling} disabled={!formik.values.id} color="primary">
+            Cancelar Agendamento
+        </Button>}
+        {!formik.values.id && 
         <Button onClick={formik.handleSubmit} disabled={formik.values.id} color="primary">
             Cadastrar
         </Button>
+        }
         </DialogActions>
     </Dialog>)
 }
