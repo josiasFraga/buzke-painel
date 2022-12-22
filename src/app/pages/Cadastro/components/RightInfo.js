@@ -8,7 +8,7 @@ export default function RightInfo(props) {
     
     return (
         <div className="col-xl-4">
-            <div className="border-radius-only-right" style={{backgroundColor: '#091D5C', padding: '40px', color: '#FFF',  height: '100%'}}>
+            <div className="border-radius-only-right" style={{backgroundColor: '#7052fb', padding: '40px', color: '#FFF',  height: '100%'}}>
             { (Object.keys(coupom).length > 0 && coupom.trial_days == 0) && <>
                 <p className="font-size-h2">Por que preciso informar meu cartão de crédito?</p>
                 <p className="font-size-h6" style={{opacity: 0.55}}>Por se tratar de um serviço prestado mediante assinatura recorrente, se faz necessária a verificação da autenticidade das informações financeiras.</p>

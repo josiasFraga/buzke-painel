@@ -5,7 +5,7 @@ import { useLocation } from "react-router";
 import { NavLink } from "react-router-dom";
 import SVG from "react-inlinesvg";
 import { toAbsoluteUrl, checkIsActive } from "../../../../_helpers";
-import { BsCalendar2Date } from 'react-icons/bs';
+import { BsCalendar2Date, BsTrophy } from 'react-icons/bs';
 
 export function AsideMenuList({ layoutProps }) {
   const location = useLocation();
@@ -84,6 +84,20 @@ export function AsideMenuList({ layoutProps }) {
               <BsCalendar2Date />
             </span>
             <span className="menu-text">Agenda</span>
+          </NavLink>
+        </li>
+        {/*end::1 Level*/}
+
+        {/*begin::1 Level*/}
+        <li
+          className={`menu-item ${getMenuItemActive("/torneios", false)}`}
+          aria-haspopup="true"
+        >
+          <NavLink className="menu-link" to="/torneios">
+            <span className="svg-icon menu-icon">
+              <BsTrophy />
+            </span>
+            <span className="menu-text">Torneios</span>
           </NavLink>
         </li>
         {/*end::1 Level*/}

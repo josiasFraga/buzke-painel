@@ -9,7 +9,7 @@ $root-font-size-md:                             	12px; // Root font size for mob
 
 // Layout Theme Colors
 $layout-themes: (
-	dark:  #091d5c, // Dark theme color
+	dark:  #7052fb, // Dark theme color
 	light: #ffffff // Light theme color
 ) !default;
 
@@ -480,9 +480,9 @@ $header-menu-config: (
 									self: (
 										bg-color: (
 											default: transparent,
-											open: #06143e,
-											active: #06143e,
-											hover: #06143e
+											open: #4237FB,
+											active: #4237FB,
+											hover: #4237FB
 										)
 									),
 
@@ -795,10 +795,10 @@ $header-menu-config: (
 								self: (
 									bg-color: (
 										default: transparent,
-										open: #06143e,
-										here: #06143e,
-										active: #06143e,
-										hover: #06143e
+										open: #4237FB,
+										here: #4237FB,
+										active: #4237FB,
+										hover: #4237FB
 									)
 								),
 								// Icon
@@ -883,10 +883,10 @@ $header-menu-config: (
 										self: (
 											bg-color: (
 												default: transparent,
-												open: #06143e,
-												here: #06143e,
-												active: #06143e,
-												hover: #06143e
+												open: #4237FB,
+												here: #4237FB,
+												active: #4237FB,
+												hover: #4237FB
 											)
 										),
 
@@ -1653,10 +1653,10 @@ $aside-menu-config: (
 							self: (
 								bg-color: (
 									default: transparent,
-									open: #06143e,
-									here: #06143e,
-									active: #06143e,
-									hover: #06143e
+									open: #4237FB,
+									here: #4237FB,
+									active: #4237FB,
+									hover: #4237FB
 								)
 							),
 
@@ -1747,10 +1747,10 @@ $aside-menu-config: (
 									self: (
 										bg-color: (
 											default: transparent,
-											open: #06143e,
-											here: #06143e,
-											active: #06143e,
-											hover: #06143e
+											open: #4237FB,
+											here: #4237FB,
+											active: #4237FB,
+											hover: #4237FB
 										)
 									),
 									// Icon

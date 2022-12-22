@@ -6,6 +6,8 @@ import { LayoutSplashScreen, ContentRoute } from "../_metronic/layout";
 import { DashboardPage } from "./pages/DashboardPage";
 import { Agenda } from "./pages/Agenda";
 import { Clientes } from './pages/Clientes';
+import { Torneios } from './pages/Torneios';
+import { TorneiosForm } from './pages/TorneiosForm';
 import { Perfil } from './pages/Perfil';
 import styled from 'styled-components';
 import { Modal } from "react-bootstrap";
@@ -76,6 +78,8 @@ export default function BasePage() {
         }
         <ContentRoute path="/dashboard" component={DashboardPage} />
         <ContentRoute path="/clientes" component={Clientes} />
+        <ContentRoute path="/torneios/form" component={TorneiosForm} />
+        <ContentRoute path="/torneios" component={Torneios} />
         <ContentRoute path="/agenda" component={Agenda} />
         <ContentRoute path="/perfil" component={Perfil} />
    

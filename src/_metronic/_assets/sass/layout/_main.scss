@@ -136,7 +136,7 @@ label.form-label { font-weight: 500; color: #091740; opacity: 0.7; letter-spacin
 .step { border-radius: 4px; width: 50px; height: 50px; display: flex; background-color: #7d89ab; justify-content: center; color: #f8fafd; letter-spacing: -0.02em; font-size: 22px; font-weight: bold}
 .step.active { background-color: #41C78F}
 .step span { line-height: 50px; } 
-.step-title { font-weight: 600; font-size: 15px; color: #091d5c; opacity: 0.8 }
+.step-title { font-weight: 600; font-size: 15px; color: #7052fb; opacity: 0.8 }
 .step-description { color: #2e3f75; font-size: 12px; opacity: 0.6 }
 .step-info { padding: 5px 0px 0px 12px; }
 .card-custom { background-color: #fff; border: 1px solid #eaeaea; border-radius: 5px; padding: 20px }
@@ -172,8 +172,8 @@ label.form-label { font-weight: 500; color: #091740; opacity: 0.7; letter-spacin
 .font-semibold { font-weight: 600 }
 .font-medium { font-weight: 500 }
 .hr { height: 1px; border-top: 1px solid rgba(9, 29, 92, 0.09) }
-.resumo-item { color: #091D5C; font-size: 16px; font-weight: 500; }
-.resumo-valor { color: #091D5C; font-size: 16px; font-weight: 500; opacity: 0.67 }
+.resumo-item { color: #7052fb; font-size: 16px; font-weight: 500; }
+.resumo-valor { color: #7052fb; font-size: 16px; font-weight: 500; opacity: 0.67 }
 .btn-primary, .btn-primary:active, .btn-primary:visited {
     background-color: #41C78F !important;
 	border-color: #41C78F !important;
@@ -220,7 +220,7 @@ label.form-label { font-weight: 500; color: #091740; opacity: 0.7; letter-spacin
 	color: #D4D6E0;
 	font-weight: bold;
 }
-.azul-cabecalho { color: #091d5c }
+.azul-cabecalho { color: #7052fb }
 
 .oportunidade { color: #2e3f75 }
 .tipo-campo {font-size: 12px; font-weight: 500; opacity: 0.6; margin-bottom: 0; }
