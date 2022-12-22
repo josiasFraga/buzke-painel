@@ -39,7 +39,7 @@ export function UserProfileDropdown() {
           </span>
           <span className="symbol symbol-35 symbol-light-success">
             <span className="symbol-label font-size-h5 font-weight-bold">
-              <img className="rounded" style={{width: '100%', height: 'auto'}} src={user.pic}/>
+              <img className="rounded" style={{width: '100%', height: '100%', objectFit: 'cover'}} src={user.img}/>
             </span>
           </span>
         </div>

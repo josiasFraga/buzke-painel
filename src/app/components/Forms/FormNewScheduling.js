@@ -98,7 +98,8 @@ export function FormNewScheduling(props) {
                                 backgroundColor: "#f7f7f7", 
                                 width: "100%", 
                                 textAlign: "center",
-                                borderRadius: "10px"
+                                borderRadius: "10px",
+                                opacity: !aval.enabled ? 0.3 : 1,
                             }}>
                             <Form.Check
                                 type="radio"
