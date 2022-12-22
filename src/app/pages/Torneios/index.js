@@ -98,10 +98,10 @@ export function Torneios() {
         type: 'CANCEL_TOURNAMENT', 
         payload: { 
           submitValues: {
-            id: item_id
+            torneio_id: item_id
           }, 
           callback: () => {
-            dispatch({type: 'LOAD_TOURNAMENTS', payload: {}});
+            dispatch({type: 'LOAD_TOURNAMENTS', payload: {params: {tipo: "meus"}}});
           }
         }
       });
