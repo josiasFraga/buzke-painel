@@ -28,7 +28,12 @@ export function Agenda() {
     }
 
     const loadSchedules = () => {
-        dispatch({type: 'LOAD_SCHEDULES', payload: {params: {type: 1, data: "2022-12-01", cliente_cliente_id: filterClient, ...filterCourtServices}}});
+        const today = new Date(); // obtém a data atual
+        const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1); // define a data para o primeiro dia do mês atual
+
+        const formattedDate = firstDayOfMonth.toISOString().slice(0, 10); // formata a data para o formato "yyyy-mm-dd"
+
+        dispatch({type: 'LOAD_SCHEDULES', payload: {params: {type: 1, data: formattedDate, cliente_cliente_id: filterClient, ...filterCourtServices}}});
     }
 
     useEffect(() => {
