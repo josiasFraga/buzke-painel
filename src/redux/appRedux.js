@@ -63,6 +63,9 @@ const INITIAL_STATE = {
 
     products: [],
     is_products_loading: false,
+
+    product_aditionals: [],
+    is_product_aditionals_loading: false,
 };
 
 export const reducer = (state = INITIAL_STATE, action) => {
@@ -188,7 +191,13 @@ export const reducer = (state = INITIAL_STATE, action) => {
             return { ...state, products: action.payload, is_products_loading: false }
         case 'LOAD_PRODUCTS_FAILED':
             return { ...state, is_products_loading: false }
-            
+
+        case 'LOAD_PRODUCTS_ADITIONALS':
+            return { ...state, product_aditionals: [], is_product_aditionals_loading: true }
+        case 'LOAD_PRODUCTS_ADITIONALS_SUCCESS':
+            return { ...state, product_aditionals: action.payload, is_product_aditionals_loading: false }
+        case 'LOAD_PRODUCTS_ADITIONALS_FAILED':
+            return { ...state, product_aditionals: [], is_product_aditionals_loading: false }        
 
         default:
             return state;
@@ -677,6 +686,88 @@ function* deleteProduct({payload}) {
     }
 }
 
+function* loadProductAditionals({payload}) {
+    try {
+        const response = yield axios.get(process.env.REACT_APP_API_URL + `/produtos-adicionais/index`, payload);
+
+        if (response.status == 200) {
+            if (response.data.status == 'ok') {   
+                yield put({type: 'LOAD_PRODUCTS_ADITIONALS_SUCCESS', payload: response.data.data});
+            } else {
+                yield put({type: 'LOAD_PRODUCTS_ADITIONALS_FAILED'});
+                toast.error(response.data.message);
+            }
+        } else {
+            yield put({type: 'LOAD_PRODUCTS_ADITIONALS_FAILED'});
+            toast.error("Ocorreu um erro ao buscar os adicionais, tente novamente.");
+        }
+        
+    } catch (e) {
+        yield put({type: 'LOAD_PRODUCT_ADITIONALS_FAILED'});
+        toast.error("Ocorreu um erro ao buscar os adicionais, tente novamente.");
+    }
+}
+
+function* saveProductAditional({payload}) {
+    try {
+
+        let url = process.env.REACT_APP_API_URL + `/produtos-adicionais/cadastrar`;
+        let msg_success = "Adicional salvo com sucesso!";
+
+        if ( payload.submitValues.id && payload.submitValues.id != "" ) {
+            url = process.env.REACT_APP_API_URL + `/produtos-adicionais/alterar`;
+            msg_success = "Adicional atualizada com sucesso!";
+        }
+
+        const response = yield axios.post(url, payload.submitValues, {
+            headers: {
+                'content-type': 'application/x-www-form-urlencoded',
+                'Accept': 'application/json',
+            }
+        });
+
+        if (response.status == 200) {
+            if (response.data.status == 'ok') {   
+                payload.setSubmitting(false);
+                toast.success(msg_success);
+                payload.callback();
+            } else {
+                toast.error(response.data.message);
+            }
+        } else {
+            toast.error("Ocorreu um erro ao salvar o adicional, tente novamente.");
+        }
+    } catch (e) {
+        console.log(e);
+        toast.error("Ocorreu um erro ao salvar o adicional, tente novamente.");
+        payload.setSubmitting(false);
+    }
+}
+
+function* deleteProductAditional({payload}) {
+    try {
+        const response = yield axios.post(process.env.REACT_APP_API_URL + `/produtos-adicionais/excluir`, payload, {
+            headers: {
+                'content-type': 'application/x-www-form-urlencoded',
+                'Accept': 'application/json',
+            }
+        });
+
+        if (response.status == 200) {
+            if (response.data.status == 'ok') {   
+                toast.success(response.data.message);
+                payload.callback();
+            } else {
+                toast.error(response.data.message);
+            }
+        } else {
+            toast.error("Ocorreu um erro ao excluir o adicional, tente novamente.");
+        }
+    } catch {
+        toast.error("Ocorreu um erro ao excluir o adicional, tente novamente.");
+    }
+}
+
 export function* saga() {
     yield takeLatest('LOAD_NOTIFICATIONS', loadNotifications);
     yield takeLatest('SET_NOTIFICATIONS_READ', setNotificationRead);
@@ -709,7 +800,10 @@ export function* saga() {
     yield takeLatest('LOAD_PRODUCTS', loadProducts);
     yield takeLatest('SAVE_PRODUCT', saveProduct); 
     yield takeLatest('DELETE_PRODUCT', deleteProduct);
-       
+
+    yield takeLatest('LOAD_PRODUCT_ADITIONALS', loadProductAditionals);
+    yield takeLatest('SAVE_PRODUCT_ADITIONAL', saveProductAditional);
+    yield takeLatest('DELETE_PRODUCT_ADITIONAL', deleteProductAditional);
 
     yield takeLatest('CANCEL_TOURNAMENT', cancelTournament);
     

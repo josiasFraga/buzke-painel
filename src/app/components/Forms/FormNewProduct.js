@@ -220,10 +220,6 @@ export function FormNewProduct(props) {
             />
             </div>
 
-            <div className="col-xl-12 col-md-12 mb-4">
-                <h4>Adicionais:</h4>
-            </div>
-
         </div>
 
     </BlockUi>

@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from 'react-redux';
-import DialogNewProduct from "../../components/DialogNewProduct";
-import DeleteDialogConfirm from "../../components/DialogConfirm";
-import DialogAditionals from "../../components/DialogAditionals";
+import DeleteDialogConfirm from "../../../components/DialogConfirm";
 
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
@@ -12,7 +10,7 @@ import Avatar from '@material-ui/core/Avatar';
 import CardHeader from '@material-ui/core/CardHeader';
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
-import Search from './components/Search';
+import Search from './Search';
 
 //table
 import Paper from '@material-ui/core/Paper';
@@ -25,11 +23,11 @@ import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 
 const columns = [
-  { id: 'descricao', model: "Produto", label: 'Nome', minWidth: 170 },
+  { id: 'descricao', model: "ProdutoAdicional", label: 'Nome', minWidth: 170 },
   { 
-      id: 'valor_custo', 
-      model: "Produto", 
-      label: 'Custo',
+      id: 'valor', 
+      model: "ProdutoAdicional", 
+      label: 'Valor',
       format: (value) => {
           const numberFormat = new Intl.NumberFormat('pt-BR', {
             style: 'currency',
@@ -39,28 +37,6 @@ const columns = [
           return numberFormat.format(value);
         },
   },
-  { 
-      id: 'valor_venda', 
-      model: "Produto", 
-      label: 'Venda',
-      format: (value) => {
-          const numberFormat = new Intl.NumberFormat('pt-BR', {
-            style: 'currency',
-            currency: 'BRL',
-          });
-    
-          return numberFormat.format(value);
-        },
-  },
-  /*{ id: 'name', label: 'Name', minWidth: 170 },
-  { id: 'code', label: 'ISO\u00a0Code', minWidth: 100 },
-  {
-    id: 'population',
-    label: 'Population',
-    minWidth: 170,
-    align: 'right',
-    format: (value) => value.toLocaleString('en-US'),
-  },*/
 ];
   
 const useStyles = makeStyles(theme => ({
@@ -87,24 +63,22 @@ const useStyles = makeStyles(theme => ({
   },
   
   tableCellActions: {
-    width: '200px', // Defina a largura desejada para a coluna de ações
+    width: '140px', // Defina a largura desejada para a coluna de ações
   },
 }));
   
 
-export function Produtos() {
+export default function Lista(props) {
 
     const dispatch = useDispatch();
     const classes = useStyles();
-    const products = useSelector(state => state.app.products);
+    const aditionals = useSelector(state => state.app.product_aditionals);
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
-    const [open, setOpen] = React.useState(false);
-    const [openAditionals, setOpenAditionals] = React.useState(false);
     const [idProductToDelete, setIdProductToDelete] = React.useState(false);
-    const [dataProductToEdit, setDataProductToEdit] = React.useState(false);
-    const [idProductAditionals, setIdProductAditionals] = React.useState(false);
     const [openDialogExclusion, setOpenDialogExclusion] = React.useState(false);
+    const product_id = props.product_id;
+    const handleClickEdit = props.handleClickEdit;
     
     const handleChangePage = (event, newPage) => {
       setPage(newPage);
@@ -116,43 +90,18 @@ export function Produtos() {
     };
 
     useEffect(() => {
-        dispatch({type: 'LOAD_PRODUCTS', payload: {}});
+        dispatch({type: 'LOAD_PRODUCT_ADITIONALS', payload: {params: {produto_id: product_id}}});
     }, []);
-
-    const handleClickNew = () => {
-      setDataProductToEdit(false);
-      setOpen(true);
-    }
-  
-    const handleClose = () => {
-      setDataProductToEdit(false);
-      setOpen(false);
-    }
 
     const handleClickDelete = (item_id) => {
       setIdProductToDelete(item_id);
       setOpenDialogExclusion(true);
     }
-  
-    const handleCloseAditionals = () => {
-      setIdProductAditionals(false);
-      setOpenAditionals(false);
-    }
-
-    const handleClickEdit = (data) => {
-      setDataProductToEdit(data);
-      setOpen(true);
-    }
-
-    const handleClickAditionals = (item_id) => {
-      setIdProductAditionals(item_id);
-      setOpenAditionals(true);
-    }
 
     const deleteItem = (item_id) => {
 
-      dispatch({type: 'DELETE_PRODUCT', payload: {id: item_id, callback: () => {
-        dispatch({type: 'LOAD_PRODUCTS', payload: {}});
+      dispatch({type: 'DELETE_PRODUCT_ADITIONAL', payload: {id: item_id, callback: () => {
+        dispatch({type: 'LOAD_PRODUCT_ADITIONALS', payload: {params: {produto_id: product_id}}});
       }}});
 
     }
@@ -166,27 +115,12 @@ export function Produtos() {
         message={"Tem certeza que deseja fazer esta exclusão? Esta ação é irreversível."} 
         actionConfirm={deleteItem}
       />
-      <DialogNewProduct 
-        open={open}
-        handleClose={handleClose}
-        dataProductToEdit={dataProductToEdit}
-        setDataProductToEdit={setDataProductToEdit}
-      />
-      <DialogAditionals
-        open={openAditionals}
-        handleClose={handleCloseAditionals}
-        product_id={idProductAditionals}
-      />
 
-      <h1 className="azul-cabecalho">Produtos</h1>
-      <p className="subheader-text mb-10">Listagem de Produtos</p>
+      <p className="subheader-text mb-10">Listagem de Adicionais</p>
 
       <div className="row">
-        <div className="col">
-          <Search />
-        </div>
-        <div className="col text-right">
-          <button type="button" className="btn btn-primary mb-10 rightBtn" onClick={() => { handleClickNew() }}>NOVO PRODUTO</button>
+        <div className="col mb-10">
+          <Search product_id={product_id} />
         </div>
       </div>
 
@@ -214,14 +148,14 @@ export function Produtos() {
               </TableRow>
           </TableHead>
           <TableBody>
-              {products
+              {aditionals
               ?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((product) => {
+              .map((aditional) => {
                   return (
-                  <TableRow hover role="checkbox" tabIndex={-1} key={product.Produto.id}>
+                  <TableRow hover role="checkbox" tabIndex={-1} key={aditional.ProdutoAdicional.id}>
                       {columns.map((column) => {
-                      const value = product[column.model][column.id];
-                      const avatarField = product[column.model][column.avatarField];
+                      const value = aditional[column.model][column.id];
+                      const avatarField = aditional[column.model][column.avatarField];
                       return (
                           <TableCell key={column.id} align={column.align}>
                             {column.type && column.type == "avatar" &&  
@@ -243,7 +177,7 @@ export function Produtos() {
                           variant="contained" 
                           className={classes.buttonEdit}
                           onClick={()=> {
-                            handleClickEdit(product)
+                            handleClickEdit(aditional)
                           }}
                         >
                           <EditIcon />
@@ -252,19 +186,10 @@ export function Produtos() {
                           variant="contained" 
                           className={classes.buttonDelete} 
                           onClick={()=> {
-                            handleClickDelete(product.Produto.id)
+                            handleClickDelete(aditional.ProdutoAdicional.id)
                           }}
                         >
                           <DeleteIcon />
-                        </Button>{" "}
-                        <Button 
-                          variant="contained" 
-                          className={classes.buttonList} 
-                          onClick={()=> {
-                            handleClickAditionals(product.Produto.id)
-                          }}
-                        >
-                          <ListOutlined />
                         </Button>
                         
                       </TableCell>
@@ -277,7 +202,7 @@ export function Produtos() {
       <TablePagination
           rowsPerPageOptions={[10, 25, 100]}
           component="div"
-          count={products.length}
+          count={aditionals.length}
           rowsPerPage={rowsPerPage}
           page={page}
           onChangePage={handleChangePage}
