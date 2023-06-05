@@ -1,0 +1,44 @@
+diff --git a/node_modules/react-currency-input/lib/react-currency-input.cjs.js b/node_modules/react-currency-input/lib/react-currency-input.cjs.js
+index 735ce0e..01d4896 100644
+--- a/node_modules/react-currency-input/lib/react-currency-input.cjs.js
++++ b/node_modules/react-currency-input/lib/react-currency-input.cjs.js
+@@ -249,7 +249,7 @@ var CurrencyInput = (function (Component$$1) {
+             selectionStart = Math.min(node.selectionStart, selectionEnd);
+         }
+ 
+-        node.setSelectionRange(selectionStart, selectionEnd);
++        //node.setSelectionRange(selectionStart, selectionEnd);
+     };
+ 
+ 
+@@ -302,7 +302,7 @@ var CurrencyInput = (function (Component$$1) {
+             selectionStart = selectionEnd;
+         }
+ 
+-        node.setSelectionRange(selectionStart, selectionEnd);
++        //node.setSelectionRange(selectionStart, selectionEnd);
+         this.inputSelectionStart = selectionStart;
+         this.inputSelectionEnd = selectionEnd;
+     };
+diff --git a/node_modules/react-currency-input/lib/react-currency-input.es.js b/node_modules/react-currency-input/lib/react-currency-input.es.js
+index 1aa64b3..b373cfd 100644
+--- a/node_modules/react-currency-input/lib/react-currency-input.es.js
++++ b/node_modules/react-currency-input/lib/react-currency-input.es.js
+@@ -244,7 +244,7 @@ var CurrencyInput = (function (Component$$1) {
+             selectionStart = Math.min(node.selectionStart, selectionEnd);
+         }
+ 
+-        node.setSelectionRange(selectionStart, selectionEnd);
++        //node.setSelectionRange(selectionStart, selectionEnd);
+     };
+ 
+ 
+@@ -297,7 +297,7 @@ var CurrencyInput = (function (Component$$1) {
+             selectionStart = selectionEnd;
+         }
+ 
+-        node.setSelectionRange(selectionStart, selectionEnd);
++        //node.setSelectionRange(selectionStart, selectionEnd);
+         this.inputSelectionStart = selectionStart;
+         this.inputSelectionEnd = selectionEnd;
+     };
