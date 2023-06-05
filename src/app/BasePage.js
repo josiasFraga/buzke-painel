@@ -7,6 +7,8 @@ import { DashboardPage } from "./pages/DashboardPage";
 import { Agenda } from "./pages/Agenda";
 import { Clientes } from './pages/Clientes';
 import { Torneios } from './pages/Torneios';
+import { ProdutosCategorias } from './pages/ProdutosCategorias';
+import { Produtos } from './pages/Produtos';
 import { TorneiosForm } from './pages/TorneiosForm';
 import { Perfil } from './pages/Perfil';
 import styled from 'styled-components';
@@ -82,7 +84,9 @@ export default function BasePage() {
         <ContentRoute path="/torneios" component={Torneios} />
         <ContentRoute path="/agenda" component={Agenda} />
         <ContentRoute path="/perfil" component={Perfil} />
-   
+        <ContentRoute path="/produtos-categorias" component={ProdutosCategorias} />
+        <ContentRoute path="/produtos" component={Produtos} />
+        
         <Redirect to="error/error-v1" />
       </Switch>
     </Suspense>

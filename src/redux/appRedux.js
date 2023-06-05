@@ -56,7 +56,13 @@ const INITIAL_STATE = {
     padel_categories: [],
     is_padel_categories_loading: false,
 
-    is_canceling_tournament: false
+    is_canceling_tournament: false,
+
+    products_categories: [],
+    is_products_categories_loading: false,
+
+    products: [],
+    is_products_loading: false,
 };
 
 export const reducer = (state = INITIAL_STATE, action) => {
@@ -168,6 +174,20 @@ export const reducer = (state = INITIAL_STATE, action) => {
             return { ...state, is_canceling_tournament: false }
         case 'CANCEL_TOURNAMENT_FAILED':
             return { ...state, is_canceling_tournament: false }
+
+        case 'LOAD_PRODUCTS_CATEGORIES':
+            return { ...state, is_products_categories_loading: true }
+        case 'LOAD_PRODUCTS_CATEGORIES_SUCCESS':
+            return { ...state, products_categories: action.payload, is_products_categories_loading: false }
+        case 'LOAD_PRODUCTS_CATEGORIES_FAILED':
+            return { ...state, is_products_categories_loading: false }
+
+        case 'LOAD_PRODUCTS':
+            return { ...state, is_products_loading: true }
+        case 'LOAD_PRODUCTS_SUCCESS':
+            return { ...state, products: action.payload, is_products_loading: false }
+        case 'LOAD_PRODUCTS_FAILED':
+            return { ...state, is_products_loading: false }
             
 
         default:
@@ -493,6 +513,170 @@ function* cancelTournament({payload}) {
     }
 }
 
+function* loadProductsCategories({payload}) {
+    try {
+        const response = yield axios.get(process.env.REACT_APP_API_URL + `/produtos-categorias/index`, payload);
+
+        if (response.status == 200) {
+            if (response.data.status == 'ok') {   
+                yield put({type: 'LOAD_PRODUCTS_CATEGORIES_SUCCESS', payload: response.data.data});
+            } else {
+                yield put({type: 'LOAD_PRODUCTS_CATEGORIES_FAILED'});
+                toast.error(response.data.message);
+            }
+        } else {
+            yield put({type: 'LOAD_PRODUCTS_CATEGORIES_FAILED'});
+            toast.error("Ocorreu um erro ao buscar as categorias dos produtos, tente novamente.");
+        }
+        
+    } catch (e) {
+        yield put({type: 'LOAD_PRODUCTS_CATEGORIES_FAILED'});
+        toast.error("Ocorreu um erro ao buscar as categorias dos produtos, tente novamente.");
+    }
+}
+
+function* saveProductCategory({payload}) {
+    try {
+
+        let url = process.env.REACT_APP_API_URL + `/produtos-categorias/cadastrar`;
+        let msg_success = "Categoria salva com sucesso!";
+
+        if ( payload.submitValues.id && payload.submitValues.id != "" ) {
+            url = process.env.REACT_APP_API_URL + `/produtos-categorias/alterar`;
+            msg_success = "Categoria atualizada com sucesso!";
+        }
+
+        const response = yield axios.post(url, payload.submitValues, {
+            headers: {
+                'content-type': 'application/x-www-form-urlencoded',
+                'Accept': 'application/json',
+            }
+        });
+
+        if (response.status == 200) {
+            if (response.data.status == 'ok') {   
+                payload.setSubmitting(false);
+                toast.success(msg_success);
+                payload.callback();
+            } else {
+                toast.error(response.data.message);
+            }
+        } else {
+            toast.error("Ocorreu um erro ao salvar a categoria, tente novamente.");
+        }
+    } catch (e) {
+        console.log(e);
+        toast.error("Ocorreu um erro ao salvar a categoria, tente novamente.");
+        payload.setSubmitting(false);
+    }
+}
+
+function* deleteProductCategory({payload}) {
+    try {
+        const response = yield axios.post(process.env.REACT_APP_API_URL + `/produtos-categorias/excluir`, payload, {
+            headers: {
+                'content-type': 'application/x-www-form-urlencoded',
+                'Accept': 'application/json',
+            }
+        });
+
+        if (response.status == 200) {
+            if (response.data.status == 'ok') {   
+                toast.success(response.data.message);
+                payload.callback();
+            } else {
+                toast.error(response.data.message);
+            }
+        } else {
+            toast.error("Ocorreu um erro ao excluir a categoria, tente novamente.");
+        }
+    } catch {
+        toast.error("Ocorreu um erro ao excluir a categoria, tente novamente.");
+    }
+}
+
+function* loadProducts({payload}) {
+    try {
+        const response = yield axios.get(process.env.REACT_APP_API_URL + `/produtos/index`, payload);
+
+        if (response.status == 200) {
+            if (response.data.status == 'ok') {   
+                yield put({type: 'LOAD_PRODUCTS_SUCCESS', payload: response.data.data});
+            } else {
+                yield put({type: 'LOAD_PRODUCTS_FAILED'});
+                toast.error(response.data.message);
+            }
+        } else {
+            yield put({type: 'LOAD_PRODUCTS_FAILED'});
+            toast.error("Ocorreu um erro ao buscar os produtos, tente novamente.");
+        }
+        
+    } catch (e) {
+        yield put({type: 'LOAD_PRODUCTS_FAILED'});
+        toast.error("Ocorreu um erro ao buscar os produtos, tente novamente.");
+    }
+}
+
+function* saveProduct({payload}) {
+    try {
+
+        let url = process.env.REACT_APP_API_URL + `/produtos/cadastrar`;
+        let msg_success = "Produto salvo com sucesso!";
+
+        if ( payload.submitValues.id && payload.submitValues.id != "" ) {
+            url = process.env.REACT_APP_API_URL + `/produtos/alterar`;
+            msg_success = "Produto atualizado com sucesso!";
+        }
+
+        const response = yield axios.post(url, payload.submitValues, {
+            headers: {
+                'content-type': 'application/x-www-form-urlencoded',
+                'Accept': 'application/json',
+            }
+        });
+
+        if (response.status == 200) {
+            if (response.data.status == 'ok') {   
+                payload.setSubmitting(false);
+                toast.success(msg_success);
+                payload.callback();
+            } else {
+                toast.error(response.data.message);
+            }
+        } else {
+            toast.error("Ocorreu um erro ao salvar o produto, tente novamente.");
+        }
+    } catch (e) {
+        console.log(e);
+        toast.error("Ocorreu um erro ao salvar o produto, tente novamente.");
+        payload.setSubmitting(false);
+    }
+}
+
+function* deleteProduct({payload}) {
+    try {
+        const response = yield axios.post(process.env.REACT_APP_API_URL + `/produtos/excluir`, payload, {
+            headers: {
+                'content-type': 'application/x-www-form-urlencoded',
+                'Accept': 'application/json',
+            }
+        });
+
+        if (response.status == 200) {
+            if (response.data.status == 'ok') {   
+                toast.success(response.data.message);
+                payload.callback();
+            } else {
+                toast.error(response.data.message);
+            }
+        } else {
+            toast.error("Ocorreu um erro ao excluir o produto, tente novamente.");
+        }
+    } catch {
+        toast.error("Ocorreu um erro ao excluir o produto, tente novamente.");
+    }
+}
+
 export function* saga() {
     yield takeLatest('LOAD_NOTIFICATIONS', loadNotifications);
     yield takeLatest('SET_NOTIFICATIONS_READ', setNotificationRead);
@@ -517,6 +701,15 @@ export function* saga() {
     yield takeLatest('LOAD_TOURNAMENTS', loadTournaments);
     yield takeLatest('LOAD_PADEL_CATEGORIES', loadPadelCategories);
     yield takeLatest('SAVE_TOURNAMENT', saveTournament);
+
+    yield takeLatest('LOAD_PRODUCTS_CATEGORIES', loadProductsCategories);
+    yield takeLatest('SAVE_PRODUCT_CATEGORY', saveProductCategory);
+    yield takeLatest('DELETE_PRODUCT_CATEGORY', deleteProductCategory);
+
+    yield takeLatest('LOAD_PRODUCTS', loadProducts);
+    yield takeLatest('SAVE_PRODUCT', saveProduct); 
+    yield takeLatest('DELETE_PRODUCT', deleteProduct);
+       
 
     yield takeLatest('CANCEL_TOURNAMENT', cancelTournament);
     

@@ -6,6 +6,7 @@ import { NavLink } from "react-router-dom";
 import SVG from "react-inlinesvg";
 import { toAbsoluteUrl, checkIsActive } from "../../../../_helpers";
 import { BsCalendar2Date, BsTrophy } from 'react-icons/bs';
+import { MdStorage } from 'react-icons/md';
 
 export function AsideMenuList({ layoutProps }) {
   const location = useLocation();
@@ -33,20 +34,79 @@ export function AsideMenuList({ layoutProps }) {
           </NavLink>
         </li>
         {/*end::1 Level*/}
+  
+        {/* Components */}
+        {/* begin::section */}
+        <li className="menu-section">
+          <h4 className="menu-text">Cadastros Básicos</h4>
+          <i className="menu-icon flaticon-more-v2"></i>
+        </li>
+        {/* end:: section */}
 
-        {/*begin::1 Level*/}
+        {/* begin::1 Level */}
         <li
-          className={`menu-item ${getMenuItemActive("/clientes", false)}`}
+          className={`menu-item ${getMenuItemActive("/cadastros-basicos", true)}`}
           aria-haspopup="true"
         >
-          <NavLink className="menu-link" to="/clientes">
+          <NavLink
+            className="menu-link menu-toggle"
+            to="/cadastros-basicos"
+          >
             <span className="svg-icon menu-icon">
-              <SVG src={toAbsoluteUrl("/media/svg/icons/Communication/Group.svg")} />
+              <MdStorage />
             </span>
-            <span className="menu-text">Clientes</span>
+            <span className="menu-text">Cadastros Básicos</span>
+            <i className="menu-arrow"></i>
           </NavLink>
+          <div className="menu-submenu">
+            <i className="menu-arrow"></i>
+            <ul className="menu-subnav">
+              {/* Submenu Item */}
+              <li
+                className={`menu-item ${getMenuItemActive("/clientes", false)}`}
+                aria-haspopup="true"
+              >
+                <NavLink
+                  className="menu-link"
+                  to="/clientes"
+                >
+                  <span className="menu-text">Clientes</span>
+                </NavLink>
+              </li>
+              {/* End of Submenu Item */}
+      
+              {/* Submenu Item */}
+              <li
+                className={`menu-item ${getMenuItemActive("/produtos-categorias", false)}`}
+                aria-haspopup="true"
+              >
+                <NavLink
+                  className="menu-link"
+                  to="/produtos-categorias"
+                >
+                  <span className="menu-text">Categoria de Produtos</span>
+                </NavLink>
+              </li>
+              {/* End of Submenu Item */}
+        
+              {/* Submenu Item */}
+              <li
+                className={`menu-item ${getMenuItemActive("/produtos", false)}`}
+                aria-haspopup="true"
+              >
+                <NavLink
+                  className="menu-link"
+                  to="/produtos"
+                >
+                  <span className="menu-text">Produtos</span>
+                </NavLink>
+              </li>
+              {/* End of Submenu Item */}
+            </ul>
+          </div>
         </li>
-        {/*end::1 Level*/}
+        {/* end::1 Level */}
+
 
         {/*begin::1 Level*/}
         <li
