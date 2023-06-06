@@ -9,6 +9,8 @@ import { Clientes } from './pages/Clientes';
 import { Torneios } from './pages/Torneios';
 import { ProdutosCategorias } from './pages/ProdutosCategorias';
 import { Produtos } from './pages/Produtos';
+import { Consumo } from './pages/Consumo';
+import { Mesas } from './pages/Mesas';
 import { TorneiosForm } from './pages/TorneiosForm';
 import { Perfil } from './pages/Perfil';
 import styled from 'styled-components';
@@ -86,6 +88,8 @@ export default function BasePage() {
         <ContentRoute path="/perfil" component={Perfil} />
         <ContentRoute path="/produtos-categorias" component={ProdutosCategorias} />
         <ContentRoute path="/produtos" component={Produtos} />
+        <ContentRoute path="/consumo" component={Consumo} />
+        <ContentRoute path="/mesas" component={Mesas} />
         
         <Redirect to="error/error-v1" />
       </Switch>

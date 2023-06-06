@@ -85,6 +85,7 @@ export default function DialogNewCustomer(props) {
                         });
 
                         dispatch({type: 'LOAD_CUSTOMERS', payload: {}});
+                        dispatch({type: 'LOAD_CUSTOMERS_LIST'});
 
                         handleClose();
                     }

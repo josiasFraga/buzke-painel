@@ -7,6 +7,7 @@ import SVG from "react-inlinesvg";
 import { toAbsoluteUrl, checkIsActive } from "../../../../_helpers";
 import { BsCalendar2Date, BsTrophy } from 'react-icons/bs';
 import { MdStorage } from 'react-icons/md';
+import { ImMobile } from 'react-icons/im';
 
 export function AsideMenuList({ layoutProps }) {
   const location = useLocation();
@@ -34,11 +35,29 @@ export function AsideMenuList({ layoutProps }) {
           </NavLink>
         </li>
         {/*end::1 Level*/}
+        
+        {/*begin::1 Level*/}
+        <li
+          className={`menu-item ${getMenuItemActive("/perfil", false)}`}
+          aria-haspopup="true"
+        >
+          <NavLink className="menu-link" to="/perfil">
+            <span className="svg-icon menu-icon">
+              <SVG
+                src={toAbsoluteUrl(
+                  "/media/svg/icons/Communication/Add-user.svg"
+                )}
+              />
+            </span>
+            <span className="menu-text">Perfil</span>
+          </NavLink>
+        </li>
+        {/*end::1 Level*/}
   
         {/* Components */}
         {/* begin::section */}
         <li className="menu-section">
-          <h4 className="menu-text">Cadastros Básicos</h4>
+          <h4 className="menu-text">Comandas</h4>
           <i className="menu-icon flaticon-more-v2"></i>
         </li>
         {/* end:: section */}
@@ -91,6 +110,20 @@ export function AsideMenuList({ layoutProps }) {
         
               {/* Submenu Item */}
               <li
+                className={`menu-item ${getMenuItemActive("/mesas", false)}`}
+                aria-haspopup="true"
+              >
+                <NavLink
+                  className="menu-link"
+                  to="/mesas"
+                >
+                  <span className="menu-text">Mesas</span>
+                </NavLink>
+              </li>
+              {/* End of Submenu Item */}
+        
+              {/* Submenu Item */}
+              <li
                 className={`menu-item ${getMenuItemActive("/produtos", false)}`}
                 aria-haspopup="true"
               >
@@ -106,22 +139,17 @@ export function AsideMenuList({ layoutProps }) {
           </div>
         </li>
         {/* end::1 Level */}
-
-
+        
         {/*begin::1 Level*/}
         <li
-          className={`menu-item ${getMenuItemActive("/perfil", false)}`}
+          className={`menu-item ${getMenuItemActive("/consumo", false)}`}
           aria-haspopup="true"
         >
-          <NavLink className="menu-link" to="/perfil">
+          <NavLink className="menu-link" to="/consumo">
             <span className="svg-icon menu-icon">
-              <SVG
-                src={toAbsoluteUrl(
-                  "/media/svg/icons/Communication/Add-user.svg"
-                )}
-              />
+              <ImMobile />
             </span>
-            <span className="menu-text">Perfil</span>
+            <span className="menu-text">Consumo</span>
           </NavLink>
         </li>
         {/*end::1 Level*/}

@@ -5,20 +5,20 @@ import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import { FormNewProductCategory } from "../Forms/FormNewProductCategory";
+import { FormNewTable } from "../Forms/FormNewTable";
 import * as yup from 'yup';
 import {useFormik} from 'formik';
 
-export default function DialogNewProductTable(props) {
+export default function DialogNewTable(props) {
 
     const dispatch = useDispatch();
 
     const open = props.open;
     const handleClose = props.handleClose;
-    const dataToEdit = props.dataCategoryToEdit;
+    const dataToEdit = props.dataTableToEdit;
 
     const initialState = {
-        nome: "",
+        descricao: "",
     };
 
     const [initialValues, setInitialValues] = useState(initialState);
@@ -26,8 +26,8 @@ export default function DialogNewProductTable(props) {
     useEffect(() => {
         if ( dataToEdit !== false ) {
             setInitialValues({
-                id: dataToEdit.ProdutoCategoria.id,
-                nome: dataToEdit.ProdutoCategoria.nome,
+                id: dataToEdit.Mesa.id,
+                descricao: dataToEdit.Mesa.descricao,
             });
         } else {
             setInitialValues(initialState);
@@ -40,7 +40,7 @@ export default function DialogNewProductTable(props) {
         onSubmit: (values, {setSubmitting, resetForm}) => {
 
             try {
-                dispatch({type: 'SAVE_PRODUCT_CATEGORY', payload: {
+                dispatch({type: 'SAVE_TABLE', payload: {
                     submitValues: {
                         ...values,
                         //id: clienteId
@@ -51,7 +51,7 @@ export default function DialogNewProductTable(props) {
                             values: initialValues,
                         });
 
-                        dispatch({type: 'LOAD_PRODUCTS_CATEGORIES', payload: {}});
+                        dispatch({type: 'LOAD_TABLES', payload: {}});
 
                         handleClose();
                     }
@@ -63,17 +63,17 @@ export default function DialogNewProductTable(props) {
         },
 
         validationSchema: yup.object().shape({
-			nome: yup
+			descricao: yup
 			.string()
-			.required("O campo nome é obrigatório")
+			.required("O campo nome é obrigatório"),
         })
     });
 
     return (
     <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title" fullWidth={true}>
-        <DialogTitle id="form-dialog-title">Nova Categoria</DialogTitle>
+        <DialogTitle id="form-dialog-title">Nova Mesa</DialogTitle>
         <DialogContent>
-            <FormNewProductCategory formik={formik} />
+            <FormNewTable formik={formik} />
         </DialogContent>
         <DialogActions>
         <Button onClick={handleClose} color="primary">

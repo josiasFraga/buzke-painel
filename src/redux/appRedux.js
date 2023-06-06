@@ -66,6 +66,10 @@ const INITIAL_STATE = {
 
     product_aditionals: [],
     is_product_aditionals_loading: false,
+
+    tables: [],
+    is_tables_loading: false,
+    table: []
 };
 
 export const reducer = (state = INITIAL_STATE, action) => {
@@ -197,7 +201,22 @@ export const reducer = (state = INITIAL_STATE, action) => {
         case 'LOAD_PRODUCTS_ADITIONALS_SUCCESS':
             return { ...state, product_aditionals: action.payload, is_product_aditionals_loading: false }
         case 'LOAD_PRODUCTS_ADITIONALS_FAILED':
-            return { ...state, product_aditionals: [], is_product_aditionals_loading: false }        
+            return { ...state, product_aditionals: [], is_product_aditionals_loading: false }    
+
+        case 'LOAD_TABLES':
+            return { ...state, is_tables_loading: true }
+        case 'LOAD_TABLES_SUCCESS':
+            return { ...state, tables: action.payload, is_tables_loading: false }
+        case 'LOAD_TABLES_FAILED':
+            return { ...state, is_tables_loading: false }  
+            
+        
+        case 'LOAD_TABLE':
+            return { ...state, table: [], is_tables_loading: true }
+        case 'LOAD_TABLES_SUCCESS':
+            return { ...state, table: action.payload, is_tables_loading: false }
+        case 'LOAD_TABLES_FAILED':
+            return { ...state, table: [], is_tables_loading: false } 
 
         default:
             return state;
@@ -768,6 +787,88 @@ function* deleteProductAditional({payload}) {
     }
 }
 
+function* loadTables({payload}) {
+    try {
+        const response = yield axios.get(process.env.REACT_APP_API_URL + `/mesas/index`, payload);
+
+        if (response.status == 200) {
+            if (response.data.status == 'ok') {   
+                yield put({type: 'LOAD_TABLES_SUCCESS', payload: response.data.data});
+            } else {
+                yield put({type: 'LOAD_TABLES_FAILED'});
+                toast.error(response.data.message);
+            }
+        } else {
+            yield put({type: 'LOAD_TABLES_FAILED'});
+            toast.error("Ocorreu um erro ao buscar as mesas, tente novamente.");
+        }
+        
+    } catch (e) {
+        yield put({type: 'LOAD_TABLES_FAILED'});
+        toast.error("Ocorreu um erro ao buscar as mesas, tente novamente.");
+    }
+}
+
+function* saveTable({payload}) {
+    try {
+
+        let url = process.env.REACT_APP_API_URL + `/mesas/cadastrar`;
+        let msg_success = "Mesa salva com sucesso!";
+
+        if ( payload.submitValues.id && payload.submitValues.id != "" ) {
+            url = process.env.REACT_APP_API_URL + `/mesas/alterar`;
+            msg_success = "Mesa atualizada com sucesso!";
+        }
+
+        const response = yield axios.post(url, payload.submitValues, {
+            headers: {
+                'content-type': 'application/x-www-form-urlencoded',
+                'Accept': 'application/json',
+            }
+        });
+
+        if (response.status == 200) {
+            if (response.data.status == 'ok') {   
+                payload.setSubmitting(false);
+                toast.success(msg_success);
+                payload.callback();
+            } else {
+                toast.error(response.data.message);
+            }
+        } else {
+            toast.error("Ocorreu um erro ao salvar a mesa, tente novamente.");
+        }
+    } catch (e) {
+        console.log(e);
+        toast.error("Ocorreu um erro ao salvar a mesa, tente novamente.");
+        payload.setSubmitting(false);
+    }
+}
+
+function* deleteTable({payload}) {
+    try {
+        const response = yield axios.post(process.env.REACT_APP_API_URL + `/mesas/excluir`, payload, {
+            headers: {
+                'content-type': 'application/x-www-form-urlencoded',
+                'Accept': 'application/json',
+            }
+        });
+
+        if (response.status == 200) {
+            if (response.data.status == 'ok') {   
+                toast.success(response.data.message);
+                payload.callback();
+            } else {
+                toast.error(response.data.message);
+            }
+        } else {
+            toast.error("Ocorreu um erro ao excluir a mesa, tente novamente.");
+        }
+    } catch {
+        toast.error("Ocorreu um erro ao excluir a mesa, tente novamente.");
+    }
+}
+
 export function* saga() {
     yield takeLatest('LOAD_NOTIFICATIONS', loadNotifications);
     yield takeLatest('SET_NOTIFICATIONS_READ', setNotificationRead);
@@ -804,6 +905,10 @@ export function* saga() {
     yield takeLatest('LOAD_PRODUCT_ADITIONALS', loadProductAditionals);
     yield takeLatest('SAVE_PRODUCT_ADITIONAL', saveProductAditional);
     yield takeLatest('DELETE_PRODUCT_ADITIONAL', deleteProductAditional);
+
+    yield takeLatest('LOAD_TABLES', loadTables);
+    yield takeLatest('SAVE_TABLE', saveTable);
+    yield takeLatest('DELETE_TABLE', deleteTable);
 
     yield takeLatest('CANCEL_TOURNAMENT', cancelTournament);
     
