@@ -110,6 +110,20 @@ export function AsideMenuList({ layoutProps }) {
         
               {/* Submenu Item */}
               <li
+                className={`menu-item ${getMenuItemActive("/comandas", false)}`}
+                aria-haspopup="true"
+              >
+                <NavLink
+                  className="menu-link"
+                  to="/comandas"
+                >
+                  <span className="menu-text">Comandas</span>
+                </NavLink>
+              </li>
+              {/* End of Submenu Item */}
+        
+              {/* Submenu Item */}
+              <li
                 className={`menu-item ${getMenuItemActive("/mesas", false)}`}
                 aria-haspopup="true"
               >

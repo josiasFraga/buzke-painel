@@ -11,6 +11,7 @@ import { ProdutosCategorias } from './pages/ProdutosCategorias';
 import { Produtos } from './pages/Produtos';
 import { Consumo } from './pages/Consumo';
 import { Mesas } from './pages/Mesas';
+import { Comandas } from './pages/Comandas';
 import { TorneiosForm } from './pages/TorneiosForm';
 import { Perfil } from './pages/Perfil';
 import styled from 'styled-components';
@@ -90,6 +91,7 @@ export default function BasePage() {
         <ContentRoute path="/produtos" component={Produtos} />
         <ContentRoute path="/consumo" component={Consumo} />
         <ContentRoute path="/mesas" component={Mesas} />
+        <ContentRoute path="/comandas" component={Comandas} />
         
         <Redirect to="error/error-v1" />
       </Switch>

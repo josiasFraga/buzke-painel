@@ -20,6 +20,30 @@ export function FormNewOrder(props) {
       setOpen(false);
     }
 
+    const checkTableExits = () => {
+        const table_name = formik.values.mesa;
+        if ( table_name != '' && table_name != null ) {
+            formik.setSubmitting(true);
+            dispatch({
+                type: 'LOAD_TABLE',
+                payload: {
+                    submitValues: {
+                        params: {
+                            descricao: table_name
+                        }
+                    },
+                    callbackSuccess: () => {
+                        formik.setSubmitting(false);
+                    },
+                    callbackNotFound: () => {
+                        formik.setFieldValue('mesa', '');
+                        formik.setSubmitting(false);                        
+                    }
+                }
+            });
+        }
+    }
+
     return (
     <>
       <DialogNewCustomer 
@@ -59,10 +83,13 @@ export function FormNewOrder(props) {
                         type="text"
                         name="mesa"
                         placeholder="Digite o número da mesa"
-                        autoFocus
                         className={"form-control " + (formik.errors.mesa && formik.touched.mesa ? 'is-invalid' : '')}
                         value={formik.values.mesa}
                         onChange={formik.handleChange}
+                        onBlur={() => {
+                            formik.handleBlur('mesa');
+                            checkTableExits();
+                        }}
                     />
                     {formik.errors.mesa && formik.touched.mesa && <label className="invalid-feedback">{formik.errors.mesa}</label>}
                 </div>

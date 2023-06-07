@@ -69,7 +69,10 @@ const INITIAL_STATE = {
 
     tables: [],
     is_tables_loading: false,
-    table: []
+    table: [],
+
+    bills: [],
+    is_bills_loading: false,
 };
 
 export const reducer = (state = INITIAL_STATE, action) => {
@@ -201,22 +204,24 @@ export const reducer = (state = INITIAL_STATE, action) => {
         case 'LOAD_PRODUCTS_ADITIONALS_SUCCESS':
             return { ...state, product_aditionals: action.payload, is_product_aditionals_loading: false }
         case 'LOAD_PRODUCTS_ADITIONALS_FAILED':
-            return { ...state, product_aditionals: [], is_product_aditionals_loading: false }    
+            return { ...state, product_aditionals: [], is_product_aditionals_loading: false }
 
         case 'LOAD_TABLES':
             return { ...state, is_tables_loading: true }
         case 'LOAD_TABLES_SUCCESS':
             return { ...state, tables: action.payload, is_tables_loading: false }
         case 'LOAD_TABLES_FAILED':
-            return { ...state, is_tables_loading: false }  
-            
-        
+            return { ...state, is_tables_loading: false }
+
         case 'LOAD_TABLE':
             return { ...state, table: [], is_tables_loading: true }
-        case 'LOAD_TABLES_SUCCESS':
-            return { ...state, table: action.payload, is_tables_loading: false }
-        case 'LOAD_TABLES_FAILED':
-            return { ...state, table: [], is_tables_loading: false } 
+
+        case 'LOAD_BILLS':
+            return { ...state, is_bill_loading: true }
+        case 'LOAD_BILLS_SUCCESS':
+            return { ...state, bills: action.payload, is_bills_loading: false }
+        case 'LOAD_BILLS_FAILED':
+            return { ...state, is_bills_loading: false }
 
         default:
             return state;
@@ -583,14 +588,15 @@ function* saveProductCategory({payload}) {
 
         if (response.status == 200) {
             if (response.data.status == 'ok') {   
-                payload.setSubmitting(false);
                 toast.success(msg_success);
                 payload.callback();
             } else {
                 toast.error(response.data.message);
             }
+            payload.setSubmitting(false);
         } else {
             toast.error("Ocorreu um erro ao salvar a categoria, tente novamente.");
+            payload.setSubmitting(false);
         }
     } catch (e) {
         console.log(e);
@@ -664,15 +670,16 @@ function* saveProduct({payload}) {
         });
 
         if (response.status == 200) {
-            if (response.data.status == 'ok') {   
-                payload.setSubmitting(false);
+            if (response.data.status == 'ok') {
                 toast.success(msg_success);
                 payload.callback();
             } else {
                 toast.error(response.data.message);
             }
+            payload.setSubmitting(false);
         } else {
             toast.error("Ocorreu um erro ao salvar o produto, tente novamente.");
+            payload.setSubmitting(false);
         }
     } catch (e) {
         console.log(e);
@@ -746,15 +753,16 @@ function* saveProductAditional({payload}) {
         });
 
         if (response.status == 200) {
-            if (response.data.status == 'ok') {   
-                payload.setSubmitting(false);
+            if (response.data.status == 'ok') {
                 toast.success(msg_success);
                 payload.callback();
             } else {
                 toast.error(response.data.message);
             }
+            payload.setSubmitting(false);
         } else {
             toast.error("Ocorreu um erro ao salvar o adicional, tente novamente.");
+            payload.setSubmitting(false);
         }
     } catch (e) {
         console.log(e);
@@ -809,6 +817,33 @@ function* loadTables({payload}) {
     }
 }
 
+function* loadTable({payload}) {
+    try {
+        const response = yield axios.get(process.env.REACT_APP_API_URL + `/mesas/index`, payload.submitValues);
+
+        if (response.status == 200) {
+            if (response.data.status == 'ok') {   
+                if (  response.data.data.length == 0 ) {
+                    toast.error("Mesa não cadastrada.");
+                    payload.callbackNotFound();
+                } else {
+                    payload.callbackSuccess();
+                }
+            } else {
+                toast.error(response.data.message);
+                payload.callbackNotFound();
+            }
+        } else {
+            toast.error("Ocorreu um erro ao buscar os dados da mesa, tente novamente.");
+            payload.callbackNotFound();
+        }
+        
+    } catch (e) {
+        toast.error("Ocorreu um erro ao buscar os dados da mesa, tente novamente.");
+        payload.callbackNotFound();
+    }
+}
+
 function* saveTable({payload}) {
     try {
 
@@ -829,14 +864,15 @@ function* saveTable({payload}) {
 
         if (response.status == 200) {
             if (response.data.status == 'ok') {   
-                payload.setSubmitting(false);
                 toast.success(msg_success);
                 payload.callback();
             } else {
                 toast.error(response.data.message);
             }
+            payload.setSubmitting(false);
         } else {
             toast.error("Ocorreu um erro ao salvar a mesa, tente novamente.");
+            payload.setSubmitting(false);
         }
     } catch (e) {
         console.log(e);
@@ -866,6 +902,89 @@ function* deleteTable({payload}) {
         }
     } catch {
         toast.error("Ocorreu um erro ao excluir a mesa, tente novamente.");
+    }
+}
+
+function* loadBills({payload}) {
+    try {
+        const response = yield axios.get(process.env.REACT_APP_API_URL + `/comandas/index`, payload);
+
+        if (response.status == 200) {
+            if (response.data.status == 'ok') {   
+                yield put({type: 'LOAD_BILLS_SUCCESS', payload: response.data.data});
+            } else {
+                yield put({type: 'LOAD_BILLS_FAILED'});
+                toast.error(response.data.message);
+            }
+        } else {
+            yield put({type: 'LOAD_BILLS_FAILED'});
+            toast.error("Ocorreu um erro ao buscar as comandas, tente novamente.");
+        }
+        
+    } catch (e) {
+        yield put({type: 'LOAD_BILLS_FAILED'});
+        toast.error("Ocorreu um erro ao buscar as comandas, tente novamente.");
+    }
+}
+
+function* saveBill({payload}) {
+    try {
+
+        let url = process.env.REACT_APP_API_URL + `/comandas/cadastrar`;
+        let msg_success = "Comanda salva com sucesso!";
+
+        if ( payload.submitValues.id && payload.submitValues.id != "" ) {
+            url = process.env.REACT_APP_API_URL + `/comandas/alterar`;
+            msg_success = "Comanda atualizada com sucesso!";
+        }
+
+        const response = yield axios.post(url, payload.submitValues, {
+            headers: {
+                'content-type': 'application/x-www-form-urlencoded',
+                'Accept': 'application/json',
+            }
+        });
+
+        if (response.status == 200) {
+            if (response.data.status == 'ok') {   
+                toast.success(msg_success);
+                payload.callback();
+            } else {
+                toast.error(response.data.message);
+            }
+            payload.setSubmitting(false);
+        } else {
+            toast.error("Ocorreu um erro ao salvar a comanda, tente novamente.");
+            payload.setSubmitting(false);
+        }
+    } catch (e) {
+        console.log(e);
+        toast.error("Ocorreu um erro ao salvar a comanda, tente novamente.");
+        payload.setSubmitting(false);
+    }
+}
+
+function* deleteBill({payload}) {
+    try {
+        const response = yield axios.post(process.env.REACT_APP_API_URL + `/comandas/excluir`, payload, {
+            headers: {
+                'content-type': 'application/x-www-form-urlencoded',
+                'Accept': 'application/json',
+            }
+        });
+
+        if (response.status == 200) {
+            if (response.data.status == 'ok') {   
+                toast.success(response.data.message);
+                payload.callback();
+            } else {
+                toast.error(response.data.message);
+            }
+        } else {
+            toast.error("Ocorreu um erro ao excluir a comanda, tente novamente.");
+        }
+    } catch {
+        toast.error("Ocorreu um erro ao excluir a comanda, tente novamente.");
     }
 }
 
@@ -909,6 +1028,11 @@ export function* saga() {
     yield takeLatest('LOAD_TABLES', loadTables);
     yield takeLatest('SAVE_TABLE', saveTable);
     yield takeLatest('DELETE_TABLE', deleteTable);
+    yield takeLatest('LOAD_TABLE', loadTable);
+
+    yield takeLatest('LOAD_BILLS', loadBills);
+    yield takeLatest('SAVE_BILL', saveBill);
+    yield takeLatest('DELETE_BILL', deleteBill);
 
     yield takeLatest('CANCEL_TOURNAMENT', cancelTournament);
     
