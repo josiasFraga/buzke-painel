@@ -28,6 +28,19 @@ export default function PickerClientes(props) {
                     formik.setFieldValue('client_client_id', null)
                     else
                     formik.setFieldValue('client_client_id', value.value)
+
+                    if (props.captureAddress) {
+                        if (value == null) {
+                            props.captureAddress('');                            
+                        } else {
+                            const client_selected = clientes.filter(opt => opt.value == value.value)[0]
+                            props.captureAddress(client_selected.endereco); 
+                        }
+                    }
+
+                    if ( props.callbackOnChange && value != null ) {
+                        props.callbackOnChange(value.value);
+                    }
                 }}
                 value={_value != "" ? clientes.filter(opt => opt.value == formik.values.client_client_id)[0] : null}
                 placeholder={props.placeholder}

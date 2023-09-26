@@ -15,6 +15,8 @@ import BlockUi from 'react-block-ui';
 export function FormNewProduct(props) {
     const formik = props.formik;
 
+    console.log(formik.errors);
+
     return (
     <BlockUi tag="div" blocking={formik.isSubmitting}>
         <div className="row">
@@ -145,7 +147,7 @@ export function FormNewProduct(props) {
                 <input
                     type="text"
                     name="cest"
-                    className={"form-control " + (formik.errors.ncm && formik.touched.cest ? 'is-invalid' : '')}
+                    className={"form-control " + (formik.errors.cest && formik.touched.cest ? 'is-invalid' : '')}
                     value={formik.values.cest}
                     onChange={formik.handleChange}
                 />

@@ -37,7 +37,7 @@ export function StepOne(props) {
 
             <div className='row' style={{paddingLeft: 15, paddingRight: 15}}>
                 <div className="col-md-6 mb-8">
-                    <label className="form-label">Início <span className="text-danger">&nbsp;*</span></label>
+                    <label className="form-label">Exibir torneio aos usuários a partir de...<span className="text-danger">&nbsp;*</span></label>
                     <input
                         type="date"
                         min={new Date().toISOString().split('T')[0]}

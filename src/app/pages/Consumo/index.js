@@ -3,28 +3,65 @@ import { useSelector, useDispatch } from 'react-redux';
 import * as yup from 'yup';
 import {useFormik} from 'formik';
 
-import { FormNewOrder } from "../../components/Forms/FormNewOrder";
-
+import { FormNewOrderStep1 } from "../../components/Forms/FormNewOrderStep1";
+import { FormNewOrderStep2 } from "../../components/Forms/FormNewOrderStep2"
 
 const initialState = {
     client_client_id: "",
     comanda: "",
     mesa: "",
+    endereco: "",
+    pdv_id: "",
+    delivery: "N",
+    produto_id: "",
+    quantidade: 1,
+    adicionais: []
 };
 
 export function Consumo() {
 
     const dispatch = useDispatch();
     const [initialValues, setInitialValues] = useState(initialState);
+    const [step, setStep] = useState(0);
+    const [open, setOpen] = useState(false);
     //const products = useSelector(state => state.app.products);
-
 
     useEffect(() => {
         //dispatch({type: 'LOAD_PRODUCTS', payload: {}});
     }, []);
+    
+    let validation = [
+        {
+            pdv_id: yup.string().required('O pdv_id é obrigatório'),
+            comanda: yup.string().required('A comanda é obrigatória'),
+            delivery: yup.string().required('O campo delivery é obrigatório'),
+            endereco: yup.string().when('delivery', {
+                is: 'Y',
+                then: yup.string().required('O endereço é obrigatório'),
+                otherwise: yup.string()
+            }),
+            client_client_id: yup.string().when('delivery', {
+                is: 'Y',
+                then: yup.string().required('O client_client_id é obrigatório'),
+                otherwise: yup.string()
+            }),
+            mesa: yup.string().when('delivery', {
+                is: 'N',
+                then: yup.string().required('A mesa é obrigatória'),
+                otherwise: yup.string()
+            })
+        },
+        {
+            produto_id: yup
+                .string()
+                .required("O campo produto é obrigatório"),
+            quantidade: yup
+                .number("O campo quantidade deve ser numérico")
+                .required("O campo quantidade é obrigatório")
+        }
+    ];
 
-    const handleClickNew = () => {
-    }
+    const buttonTexts = ['Iniciar Pedido', 'Conferir Pedido'];
 
     const formik = useFormik({
         enableReinitialize: true,
@@ -32,50 +69,46 @@ export function Consumo() {
         onSubmit: (values, {setSubmitting, resetForm}) => {
 
             try {
-                dispatch({type: 'SAVE_PRODUCT_CATEGORY', payload: {
-                    submitValues: {
-                        ...values,
-                        //id: clienteId
-                    },
-                    setSubmitting,
-                    callback: () => {
-                        resetForm({
-                            values: initialValues,
-                        });
+                if ( step == 0 ){
 
-                        dispatch({type: 'LOAD_PRODUCTS_CATEGORIES', payload: {}});
+                    dispatch({type: 'START_ORDER', payload: {
+                        submitValues: {
+                            ...values,
+                            //id: clienteId
+                        },
+                        setSubmitting,
+                        callback: () => {
+                            setStep((step+1))
+                            /*resetForm({
+                                values: initialValues,
+                            });*/
+                        }
+                    }});
+                }
+                else if ( step == 1 ){
 
-                        handleClose();
-                    }
-                }});
-                
+                    dispatch({type: 'ADD_PRODUCT_DO_ORDER', payload: {
+                        submitValues: {
+                            ...values,
+                            //id: clienteId
+                        },
+                        setSubmitting,
+                        callback: () => {
+                            resetForm({
+                                values: initialValues,
+                            });
+
+                            setOpen(false);
+                        }
+                    }});
+                }
             } catch(e) {
                 console.log(e);
             }
         },
 
-        validationSchema: yup.object().shape({
-            comanda: yup.string().required('A comanda é obrigatória'),
-            client_client_id: yup.string().test({
-                name: 'validate-client-id',
-                test: function(value) {
-                  const mesa = this.parent.mesa;
-                  return mesa !== '' || value !== '';
-                },
-                message: 'O cliente é obrigatório quando a mesa não está selecionada',
-              }),
-              mesa: yup.string().test({
-                name: 'validate-mesa',
-                test: function(value) {
-                  const clientClientId = this.parent.client_client_id;
-                  return clientClientId !== '' || value !== '';
-                },
-                message: 'A mesa é obrigatória quando o cliente não está selecionado',
-              }),
-        })
+        validationSchema: yup.object().shape(validation[step])
     });
-
-
 
     return (
     <>
@@ -93,12 +126,14 @@ export function Consumo() {
         </div>
 
         <div className="card-body pt-0 pb-3">
-            <FormNewOrder formik={formik} />
+    
+            {step == 0 && <FormNewOrderStep1 formik={formik} />}
+            {step == 1 && <FormNewOrderStep2 formik={formik} open={open} setOpen={setOpen} />}
 
             <div className="row">
                 <div className="col-12">
                     <button type="button" className="btn btn-primary btn-block mb-10 rightBtn mt-10" onClick={() => { formik.handleSubmit() }}>
-                        INICIAR PEDIDO
+                        {buttonTexts[step]}
                     </button>
                 </div>
             </div>

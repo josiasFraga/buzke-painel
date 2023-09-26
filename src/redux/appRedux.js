@@ -73,6 +73,9 @@ const INITIAL_STATE = {
 
     bills: [],
     is_bills_loading: false,
+
+    pos: [],
+    is_pos_loading: false,
 };
 
 export const reducer = (state = INITIAL_STATE, action) => {
@@ -222,6 +225,13 @@ export const reducer = (state = INITIAL_STATE, action) => {
             return { ...state, bills: action.payload, is_bills_loading: false }
         case 'LOAD_BILLS_FAILED':
             return { ...state, is_bills_loading: false }
+
+        case 'LOAD_POS':
+            return { ...state, is_pos_loading: true }
+        case 'LOAD_POS_SUCCESS':
+            return { ...state, pos: action.payload, is_pos_loading: false }
+        case 'LOAD_POS_FAILED':
+            return { ...state, is_pos_loading: false }
 
         default:
             return state;
@@ -988,6 +998,123 @@ function* deleteBill({payload}) {
     }
 }
 
+function* checkOpenBill({payload}) {
+    try {
+        const response = yield axios.get(process.env.REACT_APP_API_URL + `/comandas/verifica-aberta`, payload.submitValues);
+
+        if (response.status == 200) {
+            if (response.data.status == 'ok') {   
+                if (  response.data.reponse == 'comanda_fechada' ) {
+                    payload.callbackIsClosed();
+                } else if (  response.data.reponse == 'comanda_aberta' ) {
+                    payload.callbackIsOpened(response.data.cliente, response.data.comanda, response.data.endereco);
+                }
+            } else {
+                toast.error(response.data.message);
+                payload.callbackError();
+            }
+        } else {
+            toast.error("Ocorreu um erro ao buscar os dados da comanda, tente novamente.");
+            payload.callbackError();
+        }
+        
+    } catch (e) {
+        toast.error("Ocorreu um erro ao buscar os dados da comanda, tente novamente.");
+        payload.callbackError();
+    }
+}
+
+function* loadPos({payload}) {
+
+    try {
+        const response = yield axios.get(process.env.REACT_APP_API_URL + `/pdvs/index`, payload);
+
+        if (response.status == 200) {
+            if (response.data.status == 'ok') {   
+                yield put({type: 'LOAD_POS_SUCCESS', payload: response.data.data});
+            } else {
+                yield put({type: 'LOAD_POS_FAILED'});
+                toast.error(response.data.message);
+            }
+        } else {
+            yield put({type: 'LOAD_POS_FAILED'});
+            toast.error("Ocorreu um erro ao buscar os PDVs, tente novamente.");
+        }
+        
+    } catch (e) {
+        if (e.response && e.response.status === 401) {
+            toast.error("Sua autenticação expirou, por favor, logue novamente!");
+            return;
+        }
+   
+        yield put({type: 'LOAD_BILLS_FAILED'});
+        toast.error("Ocorreu um erro ao buscar os PDVs, tente novamente.");
+         
+    }
+}
+
+function* startOrder({payload}) {
+    try {
+
+        let url = process.env.REACT_APP_API_URL + `/comandas/iniciar-pedido`;
+
+        const response = yield axios.post(url, payload.submitValues, {
+            headers: {
+                'content-type': 'application/x-www-form-urlencoded',
+                'Accept': 'application/json',
+            }
+        });
+
+        if (response.status == 200) {
+            if (response.data.status == 'ok') {   
+                //toast.success();
+                payload.callback();
+            } else {
+                toast.error(response.data.message);
+            }
+            payload.setSubmitting(false);
+        } else {
+            toast.error("Ocorreu um erro ao iniciar o pedido, tente novamente.");
+            payload.setSubmitting(false);
+        }
+    } catch (e) {
+        toast.error("Ocorreu um erro ao iniciar o pedido, tente novamente.");
+        payload.setSubmitting(false);
+    }
+}
+
+function* addProductToOrder({payload}) {
+
+    try {
+
+        let url = process.env.REACT_APP_API_URL + `/consumo/adicionar`;
+
+        const response = yield axios.post(url, payload.submitValues, {
+            headers: {
+                'content-type': 'application/x-www-form-urlencoded',
+                'Accept': 'application/json',
+            }
+        });
+
+        if (response.status == 200) {
+            if (response.data.status == 'ok') {   
+                //toast.success();
+                payload.callback();
+            } else {
+                toast.error(response.data.message);
+            }
+            payload.setSubmitting(false);
+        } else {
+            toast.error("Ocorreu um erro ao iniciar o pedido, tente novamente.");
+            payload.setSubmitting(false);
+        }
+    } catch (e) {
+        console.log(e);
+        toast.error("Ocorreu um erro ao iniciar o pedido, tente novamente.");
+        payload.setSubmitting(false);
+    }
+}
+
 export function* saga() {
     yield takeLatest('LOAD_NOTIFICATIONS', loadNotifications);
     yield takeLatest('SET_NOTIFICATIONS_READ', setNotificationRead);
@@ -1033,7 +1160,12 @@ export function* saga() {
     yield takeLatest('LOAD_BILLS', loadBills);
     yield takeLatest('SAVE_BILL', saveBill);
     yield takeLatest('DELETE_BILL', deleteBill);
+    yield takeLatest('CHECK_OPEN_BILL', checkOpenBill);
 
+    yield takeLatest('LOAD_POS', loadPos);
+    yield takeLatest('START_ORDER', startOrder);
+    
     yield takeLatest('CANCEL_TOURNAMENT', cancelTournament);
+    yield takeLatest('ADD_PRODUCT_DO_ORDER', addProductToOrder);
     
 }
