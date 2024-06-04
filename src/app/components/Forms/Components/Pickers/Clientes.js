@@ -9,6 +9,7 @@ export default function PickerClientes(props) {
     const formik = props.formik;
     const _onChange = props.onChange;
     const _value = props.value;
+    const fieldName = props.fieldName;
 
     useEffect(() => {
         dispatch({type: 'LOAD_CUSTOMERS_LIST'});
@@ -18,16 +19,16 @@ export default function PickerClientes(props) {
         return (
             <>
             <Select 
-                name="client_client_id"
+                name={fieldName}
                 isSearchable={true}
                 isClearable={true}
                 options={clientes}
-                className={formik.errors.client_client_id && formik.touched.client_client_id ? 'is-invalid' : ''}
+                className={formik.errors[fieldName] && formik.touched[fieldName] ? 'is-invalid' : ''}
                 onChange={(value) => {
                     if (value == null)
-                    formik.setFieldValue('client_client_id', null)
+                    formik.setFieldValue(fieldName, null)
                     else
-                    formik.setFieldValue('client_client_id', value.value)
+                    formik.setFieldValue(fieldName, value.value)
 
                     if (props.captureAddress) {
                         if (value == null) {
@@ -42,13 +43,13 @@ export default function PickerClientes(props) {
                         props.callbackOnChange(value.value);
                     }
                 }}
-                value={_value != "" ? clientes.filter(opt => opt.value == formik.values.client_client_id)[0] : null}
+                value={_value != "" ? clientes.filter(opt => opt.value == formik.values[fieldName])[0] : null}
                 placeholder={props.placeholder}
                 getOptionLabel={(option) => option.label}
                 getOptionValue={(option) => option.value}
                 noOptionsMessage={() => <span>Sem resultados.</span>}
-            />                         
-            {formik.errors.client_client_id && formik.touched.client_client_id && <label className="invalid-feedback">{formik.errors.client_client_id}</label>}
+            />
+            {formik.errors[fieldName] && formik.touched[fieldName] && <label className="invalid-feedback">{formik.errors[fieldName]}</label>}
             </>
         )
     }
@@ -57,7 +58,7 @@ export default function PickerClientes(props) {
         return (
             <>
             <Select 
-                name="client_client_id"
+                name={fieldName}
                 isSearchable={true}
                 isClearable={true}
                 options={clientes}

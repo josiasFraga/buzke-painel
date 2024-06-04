@@ -139,6 +139,7 @@ export function FormNewOrderStep1(props) {
                         formik={props.formik} 
                         captureAddress={setClientAddress} 
                         callbackOnChange={checkOpenBillClient}
+                        fieldName={'client_client_id'}
                     />
                 </div>
 

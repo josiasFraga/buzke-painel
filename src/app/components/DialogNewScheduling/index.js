@@ -27,16 +27,14 @@ export default function DialogNewScheduling(props) {
     const data = useSelector(state => state.app.scheduling_data);
 
     const initialState = {
-        client_client_id: "",
-        day: {
-            dateString: ""
-        },
-        horaSelecionada: {
-            horario: "",
-            duracao: ""
-        },
-        servico: "",
-        fixo: "false",
+		selected_time: {},
+		fixo: false,
+		domicilio: false,
+		endereco: '',
+		profissional_id: '',
+		cliente_cliente_id: '',
+        servico_id: '',
+        day: ''
     };
 
     const [initialValues, setInitialValues] = useState(initialState);
@@ -87,6 +85,7 @@ export default function DialogNewScheduling(props) {
                 dispatch({type: 'SAVE_SCHEDULING', payload: {
                     submitValues: {
                         ...values,
+                        time: values.selected_time.time
                         //id: clienteId
                     },
                     setSubmitting,
@@ -107,22 +106,45 @@ export default function DialogNewScheduling(props) {
         },
 
         validationSchema: yup.object().shape({
-			client_client_id: yup
+            selected_time: yup
+            .object({
+                time: yup.string().required('O horário é obrigatório')
+            }).required('Selecione um horário'),
+	
+            endereco: yup
+            .string()
+            .when("domicilio", {
+                is: true,
+                then: yup.string().required("Informar o endereço de atendimento é obrigatório")
+            }),
+
+			cliente_cliente_id: yup
 			.number()
 			.required("O campo cliente é obrigatório"),
-            day: yup.object().shape({
-                dateString: yup.string().required("Selecione a data do agendamento antes de continuar"),
-            }),
-            horaSelecionada: yup.object().shape({
-                horario: yup.string().required("Selecione o horário do agendamento antes de continuar"),
-            }),
-            servico: yup.number().required("Selecione um cliente antes de continuar"),
+            day: yup.string().required("Selecione a data do agendamento antes de continuar"),
+            servico_id: yup.number().required("Selecione um cliente antes de continuar"),
         })
     });
 
-    useEffect(() => {
+    /*useEffect(() => {
         dispatch({type: 'LOAD_AVAILABLE_SCHEDULES', payload: {params: { data: formik.values.day.dateString}}});
-    }, [formik.values.day]);
+    }, [formik.values.day]);*/
+
+
+
+    useEffect(() => {
+
+        dispatch({
+            type: 'GET_SERVICE_DATA_TO_SCHEDULING',
+            payload: {
+                params: {
+                    servico_id: formik.values.servico_id,
+                    day: formik.values.day
+
+                }
+			}
+        });
+	}, [formik.values.servico_id, formik.values.day]);
 
     const cancelSheduling = () => {
 
@@ -174,6 +196,7 @@ export default function DialogNewScheduling(props) {
 
     return (
     <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title" fullWidth={true}>
+        
         <DialogTitle id="form-dialog-title">Novo Agendamento</DialogTitle>
         <DialogContent>
 

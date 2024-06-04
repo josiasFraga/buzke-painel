@@ -30,7 +30,7 @@ export function Filters(props) {
             </div>
 
             <div className="col-md-12 mb-4">
-                <PickerClientes onChange={setFilterClient} value={filterClient} placeholder={"Filtro por cliente"} />
+                <PickerClientes onChange={setFilterClient} value={filterClient} placeholder={"Filtro por cliente"} fieldName={"client_client_id"} />
             </div>
 
             <div className="col-md-12 mb-4">

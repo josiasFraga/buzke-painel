@@ -76,6 +76,9 @@ const INITIAL_STATE = {
 
     pos: [],
     is_pos_loading: false,
+
+    service_data_to_scheduling: {},
+    is_service_data_to_scheduling_loading: false
 };
 
 export const reducer = (state = INITIAL_STATE, action) => {
@@ -180,6 +183,13 @@ export const reducer = (state = INITIAL_STATE, action) => {
             return { ...state, padel_categories: action.payload, is_padel_categories_loading: false }
         case 'LOAD_PADEL_CATEGORIES_FAILED':
             return { ...state, padel_categories: INITIAL_STATE.padel_categories, is_padel_categories_loading: false }
+
+        case 'GET_SERVICE_DATA_TO_SCHEDULING':
+            return {...state, service_data_to_scheduling: {}, is_service_data_to_scheduling_loading: true};
+        case 'GET_SERVICE_DATA_TO_SCHEDULING_SUCCESS':
+            return {...state, service_data_to_scheduling: action.payload, is_service_data_to_scheduling_loading: false};
+        case 'GET_SERVICE_DATA_TO_SCHEDULING_FAILED':
+            return {...state, service_data_to_scheduling: {}, is_service_data_to_scheduling_loading: false};
 
         case 'CANCEL_TOURNAMENT':
             return { ...state, is_canceling_tournament: true }
@@ -383,7 +393,7 @@ function* deleteCustomer({payload}) {
 function* loadCourtServices({payload}) {
     try {
 
-        const response = yield axios.get(process.env.REACT_APP_API_URL + `/clientes/servicos`, payload);
+        const response = yield axios.get(process.env.REACT_APP_API_URL + `/servicos/index`, payload);
         
         yield put({type: 'LOAD_COURTS_SERVICES_SUCCESS', payload: response.data.dados});
     } catch (e) {
@@ -427,7 +437,7 @@ function* loadBusinessConfigs({payload}) {
 function* saveScheduling({payload}) {
     try {
 
-        let url = process.env.REACT_APP_API_URL + `/agendamentos/cadastrar`;
+        let url = process.env.REACT_APP_API_URL + `/agendamentos/add`;
         let msg_success = "Agendamento salvo com sucesso!";
 
         if ( payload.submitValues.id && payload.submitValues.id != "" ) {
@@ -1115,6 +1125,59 @@ function* addProductToOrder({payload}) {
     }
 }
 
+function* gServiceDataToScheduling({payload}) {
+
+    if ( payload.params.servico_id === "" || payload.params.day === "" ) {
+        
+        yield put({
+            type: 'GET_SERVICE_DATA_TO_SCHEDULING_SUCCESS',
+            payload: {}
+        });
+
+        return false;
+    }
+
+	try {
+        const response = yield axios.get(process.env.REACT_APP_API_URL + `/servicos/dados_para_agendamento`, payload);
+
+		if (response.data.status == 'ok') {
+			let dados = response.data.dados;
+			yield put({
+				type: 'GET_SERVICE_DATA_TO_SCHEDULING_SUCCESS',
+				payload: dados
+			});
+		} else if (response.data.status == 'warning') {
+		    toast.warn(response.data.msg);
+			yield put({
+				type: 'GET_SERVICE_DATA_TO_SCHEDULING_FAILED',
+				payload: {}
+			});
+		} else if (response.data.status == 'info') {
+		    toast.info(response.data.msg);
+			yield put({
+				type: 'GET_SERVICE_DATA_TO_SCHEDULING_FAILED',
+				payload: {}
+			});
+		}else{
+
+		    toast.error(response.data.msg);
+			yield put({
+				type: 'GET_SERVICE_DATA_TO_SCHEDULING_FAILED',
+				payload: {}
+			});
+		}
+	} catch ({message, response}) {
+		console.warn('[ERROR : BUSCA SERVICE DATA]', { message, response });
+		toast.error(response.data.message);
+
+		yield put({
+			type: 'GET_SERVICE_HOURS_FAILED',
+			payload: false
+		});
+	}
+
+}
+
 export function* saga() {
     yield takeLatest('LOAD_NOTIFICATIONS', loadNotifications);
     yield takeLatest('SET_NOTIFICATIONS_READ', setNotificationRead);
@@ -1167,5 +1230,7 @@ export function* saga() {
     
     yield takeLatest('CANCEL_TOURNAMENT', cancelTournament);
     yield takeLatest('ADD_PRODUCT_DO_ORDER', addProductToOrder);
+
+	yield takeLatest('GET_SERVICE_DATA_TO_SCHEDULING', gServiceDataToScheduling);
     
 }

@@ -14,149 +14,97 @@ export function FormNewScheduling(props) {
     const dispatch = useDispatch();
 
     const formik = props.formik;
-    const available_schedules = useSelector(state => state.app.available_schedules);
     const my_courts_services = useSelector(state => state.app.courts_services);
     const business_configs = useSelector((state) => state.app.business_configs);
-    const [radiosCourtsServices, setRadiosCourtsServices] = useState([]);
 
-    useEffect(() => {
-        if ( my_courts_services.length > 0 ) {
-            setRadiosCourtsServices(my_courts_services.map((mcs) => {
-                mcs.ClienteServico.disabled = false;
-                return mcs;
-            }));
-        }
-    }, [my_courts_services]);
+    const loading = useSelector(state => state.app.is_service_data_to_scheduling_loading);
+    const data_to_scheduling = useSelector(state => state.app.service_data_to_scheduling);
 
-    useEffect(() => {
+	let fixedShedulingDisabled = Object.keys(formik.values.selected_time) === 0;
+	let showDomociliarSheduling = true;
+	let domociliarShedulingDisabled = Object.keys(formik.values.selected_time) === 0;
+	let showChooseProfessional = false;
 
-        if (formik.values.horaSelecionada.horario != "" && !formik.values.id) {
+	if ( data_to_scheduling.enable_fixed_shedulling !== true ) {
+		fixedShedulingDisabled = true;
+	}
 
-            let hora_selecionada = available_schedules.filter((aval) => {
-                return aval.horario == formik.values.horaSelecionada.horario;
-            });
+	if ( data_to_scheduling.tipo === 'Quadra' ) {
+		showDomociliarSheduling = false;
+	}
 
-            formik.setFieldValue("horaSelecionada.duracao", hora_selecionada[0].duracao);
+	if ( data_to_scheduling.tipo === 'Serviço' ) {
+		showChooseProfessional = true;
+	}
 
-            const servicos_desativar = hora_selecionada[0].servicos_desativar;
+	if ( Object.keys(formik.values.selected_time).length > 0 ) {
 
-            if ( servicos_desativar.length > 0 ) {
-                const my_cs = my_courts_services.map((court_service)=>{
-                    court_service.ClienteServico.disabled = servicos_desativar.indexOf(court_service.ClienteServico.id) > -1;
-                    return court_service;
-                });
+		if ( !formik.values.selected_time.enable_fixed_scheduling ) {
+			fixedShedulingDisabled = true;
+		}
 
-                setRadiosCourtsServices(my_cs);
-            } else {
+		if ( !formik.values.selected_time.at_home || formik.values.selected_time.only_at_home ) {
+			domociliarShedulingDisabled = true;
+		}
+	}
 
-                setRadiosCourtsServices(my_courts_services.map((mcs) => {
-                    mcs.ClienteServico.disabled = false;
-                    return mcs;
-                }));
-            }
-        
-            formik.setFieldValue("servico","");
-        }
-    }, [formik.values.horaSelecionada]);
+	useEffect(()=>{
+		if ( formik.values.selected_time && formik.values.selected_time.only_at_home ) {
+			formik.setFieldValue('domicilio', true)
+		}
+	}, [formik.values.selected_time])
 
-    
     return (
-        <BlockUi tag="div" blocking={formik.isSubmitting}>
+        <BlockUi tag="div" blocking={formik.isSubmitting || loading}>
             <div className="row">
+
+                <div className="col-xl-12 col-md-12 mb-8">
+                    <PickerClientes formik={props.formik} fieldName={'cliente_cliente_id'} />
+                </div>
 
                 <div className="col-md-12 mb-8">
                     <label className="form-label">Data <span className="text-danger">&nbsp;*</span></label>
                     <input
                         type="date"
-                        name="day.dateString"
+                        name="day"
                         min={new Date().toISOString().split('T')[0]}
-                        className={"form-control " + (formik.errors.day && formik.errors.day.dateString && formik.touched.day && formik.touched.day.dateString ? 'is-invalid' : '')}
-                        value={formik.values.day.dateString}
+                        className={"form-control " + (formik.errors.day && formik.errors.day && formik.touched.day && formik.touched.day ? 'is-invalid' : '')}
+                        value={formik.values.day}
                         onChange={(evt) => {
                             const value = evt.target.value;
                             if (value == null || value == "") {
-                                formik.setFieldValue('day', {"dateString" : ""});
+                                formik.setFieldValue('day', "");
                             } else
-                                formik.setFieldValue('day', {"dateString" : value});
+                                formik.setFieldValue('day', value);
                         }}
                     />
-                    {formik.errors.day && formik.errors.day.dateString && formik.touched.day && formik.touched.day.dateString && <label className="invalid-feedback">{formik.errors.day.dateString}</label>}
-                </div>
-
-                <div className="col-xl-12 col-md-12 mb-8">
-                    <PickerClientes formik={props.formik} />
-                </div>
-
-                <div className="col-xl-12 col-md-12 mb-8">
-                    <label className="form-label">Horario</label>
-                    <div className="row">
-                    {available_schedules.map((aval, index)=>{
-                        return (
-                        <div className="col-md-2 col-sm-3" 
-                        key={"available_" + index}>
-                        <div className="mb-4" style={{
-                                backgroundColor: "#f7f7f7", 
-                                width: "100%", 
-                                textAlign: "center",
-                                borderRadius: "10px",
-                                opacity: !aval.enabled ? 0.3 : 1,
-                            }}>
-                            <Form.Check
-                                type="radio"
-                                label={aval.horario}
-                                name="horaSelecionada.horario"
-                                id={"radio_horario_" + index}
-                                custom
-                                checked={formik.values.horaSelecionada && formik.values.horaSelecionada.horario == aval.horario}
-                                disabled={!aval.enabled}
-                                style={{
-                                    paddingLeft: "10px", 
-                                    paddingRight: "10px", 
-                                    paddingTop: "10px", 
-                                    paddingBottom: "10px",
-                                }}
-                                onChange={(evt)=>{
-                                    if ( evt.target.checked ) {
-                                        formik.setFieldValue("horaSelecionada.horario", 
-                                            aval.horario
-                                        );
-                                    }
-                                }}
-                            />
-                        </div>
-                        </div>
-                        );
-                    })}
-                        <div className="col-md-12">
-                            {formik.errors.horaSelecionada && formik.errors.horaSelecionada.horario && <label className="invalid-feedback d-block">{formik.errors.horaSelecionada.horario}</label>}
-                        </div>
-                    </div>
+                    {formik.errors.day && formik.errors.day && formik.touched.day && formik.touched.day && <label className="invalid-feedback">{formik.errors.day}</label>}
                 </div>
 
                 <div className="col-xl-12 col-md-12 mb-8">
                     <label className="form-label">Quadra/Serviço</label>
                     {
-                        radiosCourtsServices.map((court_service, index)=>{
+                        my_courts_services.map((court_service, index)=>{
                             return (
                                 <Form.Check
                                     key={index}
                                     id={"radio_servico_" + index}
                                     bsCustomPrefix
                                     //custom
-                                    disabled={court_service.ClienteServico.disabled}
+                                    //disabled={court_service.ClienteServico.disabled}
                                     className="mb-2"
                                     type="radio"
                                 >
                                     <Form.Check.Input 
                                         value={court_service.ClienteServico.id}
-                                        name="servico"
+                                        name="servico_id"
                                         type="radio"
                                         disabled={court_service.ClienteServico.disabled}
-                                        checked={formik.values.servico == court_service.ClienteServico.id}
+                                        checked={formik.values.servico_id == court_service.ClienteServico.id}
                                         onChange={(evt)=>{
                                             
                                             if ( evt.target.checked ) {
-                                                formik.setFieldValue("servico", 
+                                                formik.setFieldValue("servico_id", 
                                                 court_service.ClienteServico.id
                                                 );
                                             }
@@ -171,9 +119,88 @@ export function FormNewScheduling(props) {
                         })
                     }
                     <div className="col-md-12">
-                        {formik.errors.servico && formik.touched.servico && <label className="invalid-feedback d-block">{formik.errors.servico}</label>}
+                        {formik.errors.servico_id && formik.touched.servico_id && <label className="invalid-feedback d-block">{formik.errors.servico_id}</label>}
                     </div>
                 </div>
+
+                <div className="col-xl-12 col-md-12 mb-8">
+                    <label className="form-label">Horario</label>
+                    <div className="row">
+                        {
+                            formik.values.servico_id === "" && <div className="col-md-12"><label className="invalid-feedback d-block">Selecione o SERVIÇO acima</label></div>
+                        }
+                        {
+                            formik.values.day === "" && <div className="col-md-12"><label className="invalid-feedback d-block">Selecione a DATA acima</label></div>
+                        }
+                        {Object.keys(data_to_scheduling).length > 0 && data_to_scheduling.horarios.map((aval, index)=>{
+                            return (
+                            <div className="col-md-2 col-sm-3" 
+                            key={"available_" + index}>
+                                <div className="mb-4" style={{
+                                    backgroundColor: "#f7f7f7", 
+                                    width: "100%", 
+                                    textAlign: "center",
+                                    borderRadius: "10px",
+                                    opacity: !aval.active ? 0.3 : 1,
+                                }}>
+                                <Form.Check
+                                    type="radio"
+                                    label={aval.label}
+                                    name="selected_time.time"
+                                    id={"radio_horario_" + index}
+                                    custom
+                                    checked={formik.values.selected_time.time && formik.values.selected_time.time == aval.time}
+                                    disabled={!aval.active}
+                                    style={{
+                                        paddingLeft: "10px", 
+                                        paddingRight: "10px", 
+                                        paddingTop: "10px", 
+                                        paddingBottom: "10px",
+                                    }}
+                                    onChange={(evt)=>{
+                                        if ( evt.target.checked ) {
+                                            formik.setFieldValue("selected_time.time", 
+                                                aval.time
+                                            );
+                                        }
+                                    }}
+                                />
+                            </div>
+                            </div>
+                            );
+                        })}
+                        <div className="col-md-12">
+                            {formik.errors.selected_time && formik.errors.selected_time.time && <label className="invalid-feedback d-block">{formik.errors.selected_time.time}</label>}
+                        </div>
+                    </div>
+                </div>
+
+                {
+                    showDomociliarSheduling && 
+                    <>
+                    <div className="col-xl-12 col-md-12 mb-8">
+                        <label className="form-label">A domicilio?</label>
+                        <Form.Check 
+                            type={"checkbox"}
+                            id={`domicilio`}
+                            label={`Sim`}
+                            disabled={domociliarShedulingDisabled}
+                            onChange={(evt)=>{
+                                if ( evt.target.checked ) {
+                                    formik.setFieldValue("fixo", 
+                                        true
+                                    );
+                                } else {
+
+                                    formik.setFieldValue("fixo", 
+                                        false
+                                    );
+                                }
+                            }}
+                        />
+                    </div>
+                    </>
+                }
 
                 {
                     business_configs.horario_fixo == "Y" &&
@@ -183,6 +210,7 @@ export function FormNewScheduling(props) {
                             type={"checkbox"}
                             id={`fixo`}
                             label={`Sim`}
+                            disabled={fixedShedulingDisabled}
                             onChange={(evt)=>{
                                 if ( evt.target.checked ) {
                                     formik.setFieldValue("fixo", 
