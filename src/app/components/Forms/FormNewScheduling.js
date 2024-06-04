@@ -54,6 +54,8 @@ export function FormNewScheduling(props) {
 		}
 	}, [formik.values.selected_time])
 
+    console.log(formik.values);
+
     return (
         <BlockUi tag="div" blocking={formik.isSubmitting || loading}>
             <div className="row">
@@ -187,12 +189,12 @@ export function FormNewScheduling(props) {
                             disabled={domociliarShedulingDisabled}
                             onChange={(evt)=>{
                                 if ( evt.target.checked ) {
-                                    formik.setFieldValue("fixo", 
+                                    formik.setFieldValue("domicilio", 
                                         true
                                     );
                                 } else {
 
-                                    formik.setFieldValue("fixo", 
+                                    formik.setFieldValue("domicilio", 
                                         false
                                     );
                                 }
@@ -200,6 +202,23 @@ export function FormNewScheduling(props) {
                         />
                     </div>
                     </>
+                }
+
+                {formik.values.domicilio && 
+                    <div className="col-xl-12 col-md-12 mb-8">
+                        <label className="form-label">Endereço</label>
+                        <Form.Control 
+                            as="textarea"
+                            rows={3}
+                            name="endereco"
+                            value={formik.values.endereco}
+                            onChange={(evt) => {
+                                formik.setFieldValue('endereco', evt.target.value);
+                            }}
+                            className={formik.errors.endereco && formik.touched.endereco ? 'is-invalid' : ''}
+                        />
+                        {formik.errors.endereco && formik.touched.endereco && <label className="invalid-feedback">{formik.errors.endereco}</label>}
+                    </div>
                 }
 
                 {
