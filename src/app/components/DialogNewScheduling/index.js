@@ -27,12 +27,12 @@ export default function DialogNewScheduling(props) {
     const data = useSelector(state => state.app.scheduling_data);
 
     const initialState = {
-		selected_time: {},
-		fixo: false,
-		domicilio: false,
-		endereco: '',
-		profissional_id: '',
-		cliente_cliente_id: '',
+        selected_time: {},
+        fixo: false,
+        domicilio: false,
+        endereco: '',
+        profissional_id: '',
+        cliente_cliente_id: '',
         servico_id: '',
         day: ''
     };
@@ -40,196 +40,178 @@ export default function DialogNewScheduling(props) {
     const [initialValues, setInitialValues] = useState(initialState);
 
     useEffect(() => {
-
-        if ( dataToView != null ) {
-            dispatch({type: 'LOAD_SCHEDULING_DATA', payload: {params: {
-                agendamento_id: dataToView.id,
-                horario: dataToView.horario
-            }}});
-
+        if (dataToView != null) {
+            dispatch({
+                type: 'LOAD_SCHEDULING_DATA',
+                payload: {
+                    params: {
+                        agendamento_id: dataToView.id,
+                        horario: dataToView.horario
+                    }
+                }
+            });
         }
-
-    }, [dataToView]);
+    }, [dataToView, dispatch]);
 
     useEffect(() => {
-
-        if ( data && data.Agendamento ) {
+        if (data && data.Agendamento) {
             const newInitialValues = {
                 id: data.Agendamento.id,
-                client_client_id: data.Agendamento.cliente_cliente_id,
-                day: {
-                    dateString: data.Agendamento.horario.split(" ")[0]
+                selected_time: {
+                    time: data.Agendamento.horario.split(" ")[1],
+                    at_home: data.Agendamento.domicilio === 'Y',
+                    only_at_home: false,
                 },
-                horaSelecionada: {
-                    horario: data.Agendamento.horario.split(" ")[1],
-                    duracao: data.Agendamento.duracao
-                },
-                servico: data.Agendamento.servico_id,
-                fixo: data.Agendamento.tipo == "fixo" ? "true" : "false",
+                fixo: data.Agendamento.tipo === 'fixo',
+                domicilio: data.Agendamento.domicilio === 'Y',
+                endereco: data.Agendamento.endereco,
+                profissional_id: data.Agendamento.profissional_id,
+                cliente_cliente_id: data.Agendamento.cliente_cliente_id,
+                servico_id: data.Agendamento.servico_id,
+                day: data.Agendamento.horario.split(" ")[0]
             };
 
-            setInitialValues(newInitialValues);
-        } else {
+            if (JSON.stringify(initialValues) !== JSON.stringify(newInitialValues)) {
+                setInitialValues(newInitialValues);
+            }
+        } else if (JSON.stringify(initialValues) !== JSON.stringify(initialState)) {
             setInitialValues(initialState);
-
         }
-
-    }, [data]);
+    }, [data, initialValues, initialState]);
 
     const formik = useFormik({
         enableReinitialize: true,
         initialValues: initialValues,
-        onSubmit: (values, {setSubmitting, resetForm}) => {
-
+        onSubmit: (values, { setSubmitting, resetForm }) => {
             try {
-                dispatch({type: 'SAVE_SCHEDULING', payload: {
-                    submitValues: {
-                        ...values,
-                        time: values.selected_time.time
-                        //id: clienteId
-                    },
-                    setSubmitting,
-                    callback: () => {
-                        resetForm({
-                            values: initialValues,
-                        });
+                dispatch({
+                    type: 'SAVE_SCHEDULING',
+                    payload: {
+                        submitValues: {
+                            ...values,
+                            time: values.selected_time.time
+                        },
+                        setSubmitting,
+                        callback: () => {
+                            resetForm({
+                                values: initialValues,
+                            });
 
-                        loadSchedules();
-
-                        handleClose();
+                            loadSchedules();
+                            handleClose();
+                        }
                     }
-                }});
-                
-            } catch(e) {
+                });
+            } catch (e) {
                 console.log(e);
             }
         },
-
         validationSchema: yup.object().shape({
-            selected_time: yup
-            .object({
+            selected_time: yup.object({
                 time: yup.string().required('O horário é obrigatório')
             }).required('Selecione um horário'),
-	
-            endereco: yup
-            .string()
-            .when("domicilio", {
+            endereco: yup.string().when("domicilio", {
                 is: true,
                 then: yup.string().required("Informar o endereço de atendimento é obrigatório")
             }),
-
-			cliente_cliente_id: yup
-			.number()
-			.required("O campo cliente é obrigatório"),
+            cliente_cliente_id: yup.number().required("O campo cliente é obrigatório"),
             day: yup.string().required("Selecione a data do agendamento antes de continuar"),
             servico_id: yup.number().required("Selecione um cliente antes de continuar"),
         })
     });
 
-    /*useEffect(() => {
-        dispatch({type: 'LOAD_AVAILABLE_SCHEDULES', payload: {params: { data: formik.values.day.dateString}}});
-    }, [formik.values.day]);*/
-
-
-
     useEffect(() => {
-
         dispatch({
             type: 'GET_SERVICE_DATA_TO_SCHEDULING',
             payload: {
                 params: {
                     servico_id: formik.values.servico_id,
                     day: formik.values.day
-
                 }
-			}
+            }
         });
-	}, [formik.values.servico_id, formik.values.day]);
+    }, [formik.values.servico_id, formik.values.day, dispatch]);
 
     const cancelSheduling = () => {
-
-        if ( data.Agendamento.cancelado == "Y" ) {
+        if (data.Agendamento.cancelado === "Y") {
             alert("Esse agendamento já foi cancelado!");
-            return false;
+            return;
         }
 
-        if ( data.Agendamento.torneio_id != null ) {
+        if (data.Agendamento.torneio_id != null) {
             alert("Você não pode cancelar um agendamento de torneio!");
-            return false;
+            return;
         }
 
-        if ( data.Agendamento.tipo == "fixo" ) {
+        if (data.Agendamento.tipo === "fixo") {
             setOpenCancelFixedConfirm(true);
-            return false;
+            return;
         }
 
         setOpenCancelConfirm(true);
-
-    }
+    };
 
     const cancelShedulingTrigger = (tipo) => {
-
         let params = {
             agendamento_id: data.Agendamento.id,
             horario: data.Agendamento.horario,
         };
 
-        if ( tipo == 1 ) {
+        if (tipo === 1) {
             params.tipo = 1;
         }
 
         try {
-            dispatch({type: 'CANCEL_SCHEDULING', payload: {
-                submitValues: {
-                    ...params,
-                    //id: clienteId
-                },
-                callback: () => {
-                    history.go(0);
+            dispatch({
+                type: 'CANCEL_SCHEDULING',
+                payload: {
+                    submitValues: {
+                        ...params,
+                    },
+                    callback: () => {
+                        history.go(0);
+                    }
                 }
-            }});
-            
-        } catch(e) {
+            });
+        } catch (e) {
             console.log(e);
         }
-    }
+    };
 
     return (
-    <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title" fullWidth={true}>
-        
-        <DialogTitle id="form-dialog-title">Novo Agendamento</DialogTitle>
-        <DialogContent>
-
-            <DialogCancelConfirm
-                open={openCancelConfirm} 
-                setDialogOpen={setOpenCancelConfirm} 
-                id={""} 
-                message={"Tem certeza que deseja cancelar este agendamento? Esta ação é irreversível."} 
-                actionConfirm={cancelShedulingTrigger}
-            />
-
-            <DialogCancelFixedConfirm
-                open={openCancelFixedConfirm} 
-                setDialogOpen={setOpenCancelFixedConfirm} 
-                message={"Tem certeza que deseja cancelar este agendamento? Esta ação é irreversível."} 
-                actionConfirm={cancelShedulingTrigger}
-            />
-
-            <FormNewScheduling formik={formik} />
-        </DialogContent>
-        <DialogActions>
-        <Button onClick={handleClose} color="primary">
-            Fechar
-        </Button>
-        {formik.values.id && 
-        <Button onClick={cancelSheduling} disabled={!formik.values.id} color="primary">
-            Cancelar Agendamento
-        </Button>}
-        {!formik.values.id && 
-        <Button onClick={formik.handleSubmit} disabled={formik.values.id} color="primary">
-            Cadastrar
-        </Button>
-        }
-        </DialogActions>
-    </Dialog>)
+        <Dialog open={open} aria-labelledby="form-dialog-title" fullWidth={true}>
+            <DialogTitle id="form-dialog-title">Novo Agendamento</DialogTitle>
+            <DialogContent>
+                <DialogCancelConfirm
+                    open={openCancelConfirm}
+                    setDialogOpen={setOpenCancelConfirm}
+                    id={""}
+                    message={"Tem certeza que deseja cancelar este agendamento? Esta ação é irreversível."}
+                    actionConfirm={cancelShedulingTrigger}
+                />
+                <DialogCancelFixedConfirm
+                    open={openCancelFixedConfirm}
+                    setDialogOpen={setOpenCancelFixedConfirm}
+                    message={"Tem certeza que deseja cancelar este agendamento? Esta ação é irreversível."}
+                    actionConfirm={cancelShedulingTrigger}
+                />
+                <FormNewScheduling formik={formik} />
+            </DialogContent>
+            <DialogActions>
+                <Button onClick={handleClose} color="primary">
+                    Fechar
+                </Button>
+                {formik.values.id && (
+                    <Button onClick={cancelSheduling} color="primary">
+                        Cancelar Agendamento
+                    </Button>
+                )}
+                {!formik.values.id && (
+                    <Button onClick={formik.handleSubmit} color="primary">
+                        Cadastrar
+                    </Button>
+                )}
+            </DialogActions>
+        </Dialog>
+    );
 }

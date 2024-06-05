@@ -78,7 +78,10 @@ const INITIAL_STATE = {
     is_pos_loading: false,
 
     service_data_to_scheduling: {},
-    is_service_data_to_scheduling_loading: false
+    is_service_data_to_scheduling_loading: false,
+
+    professionals: [],
+    is_professionals_loading: false,
 };
 
 export const reducer = (state = INITIAL_STATE, action) => {
@@ -242,6 +245,13 @@ export const reducer = (state = INITIAL_STATE, action) => {
             return { ...state, pos: action.payload, is_pos_loading: false }
         case 'LOAD_POS_FAILED':
             return { ...state, is_pos_loading: false }
+
+        case 'GET_PROFESSIONALS':
+            return {...state, professionals: [], is_professionals_loading: true};
+        case 'GET_PROFESSIONALS_SUCCESS':
+            return {...state, professionals: action.payload, is_professionals_loading: false};
+        case 'GET_PROFESSIONALS_FAILED':
+            return {...state, professionals: [], is_professionals_loading: false};
 
         default:
             return state;
@@ -1178,6 +1188,36 @@ function* gServiceDataToScheduling({payload}) {
 
 }
 
+function* gProfessionals({payload}){
+	
+	try {
+        const response = yield axios.get(process.env.REACT_APP_API_URL + `/usuarios/index`, payload);
+        
+        if (response.status == 200) {
+            if (response.data.status == 'ok') {   
+                yield put({type: 'GET_PROFESSIONALS_SUCCESS', payload: response.data.dados});
+            } else {
+                yield put({type: 'GET_PROFESSIONALS_FAILED'});
+                toast.error(response.data.message);
+            }
+        } else {
+            yield put({type: 'GET_PROFESSIONALS_FAILED'});
+            toast.error("Ocorreu um erro ao buscar os PDVs, tente novamente.");
+        }
+
+
+	} catch ({message, response}) {
+        if (e.response && e.response.status === 401) {
+            toast.error("Sua autenticação expirou, por favor, logue novamente!");
+            return;
+        }
+   
+        yield put({type: 'GET_PROFESSIONALS_FAILED'});
+        toast.error("Ocorreu um erro ao buscar os profissionais, tente novamente.");
+	}
+
+}
+
 export function* saga() {
     yield takeLatest('LOAD_NOTIFICATIONS', loadNotifications);
     yield takeLatest('SET_NOTIFICATIONS_READ', setNotificationRead);
@@ -1230,6 +1270,7 @@ export function* saga() {
     
     yield takeLatest('CANCEL_TOURNAMENT', cancelTournament);
     yield takeLatest('ADD_PRODUCT_DO_ORDER', addProductToOrder);
+    yield takeLatest('GET_PROFESSIONALS', gProfessionals);    
 
 	yield takeLatest('GET_SERVICE_DATA_TO_SCHEDULING', gServiceDataToScheduling);
     

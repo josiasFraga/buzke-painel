@@ -1,21 +1,20 @@
-import React, { useState, useEffect } from "react";
-import { useSelector, useDispatch } from 'react-redux';
-import { cpfMask, phoneUyMask, phoneMask, cepMask2 } from '../../../_metronic/_helpers/MasksHelper';
+import React, { useEffect } from "react";
+import { useSelector } from 'react-redux';
 
 import PickerClientes from '../Forms/Components/Pickers/Clientes';
+import PickerProfissionais from '../Forms/Components/Pickers/Profissionais';
 
 import Form from 'react-bootstrap/Form';
 
-import { toast } from 'react-toastify';
+
 import BlockUi from 'react-block-ui';
 
 export function FormNewScheduling(props) {
 
-    const dispatch = useDispatch();
-
     const formik = props.formik;
     const my_courts_services = useSelector(state => state.app.courts_services);
     const business_configs = useSelector((state) => state.app.business_configs);
+    const isLoadingProfissional = useSelector(state => state.app.is_professionals_loading);
 
     const loading = useSelector(state => state.app.is_service_data_to_scheduling_loading);
     const data_to_scheduling = useSelector(state => state.app.service_data_to_scheduling);
@@ -54,14 +53,12 @@ export function FormNewScheduling(props) {
 		}
 	}, [formik.values.selected_time])
 
-    console.log(formik.values);
-
     return (
-        <BlockUi tag="div" blocking={formik.isSubmitting || loading}>
+        <BlockUi tag="div" blocking={formik.isSubmitting || loading || isLoadingProfissional}>
             <div className="row">
 
                 <div className="col-xl-12 col-md-12 mb-8">
-                    <PickerClientes formik={props.formik} fieldName={'cliente_cliente_id'} />
+                    <PickerClientes formik={props.formik} fieldName={'cliente_cliente_id'} placeholder="Escolha um cliente" />
                 </div>
 
                 <div className="col-md-12 mb-8">
@@ -143,7 +140,7 @@ export function FormNewScheduling(props) {
                                     width: "100%", 
                                     textAlign: "center",
                                     borderRadius: "10px",
-                                    opacity: !aval.active ? 0.3 : 1,
+                                    opacity: !aval.active && !formik.values.id ? 0.3 : 1,
                                 }}>
                                 <Form.Check
                                     type="radio"
@@ -152,7 +149,7 @@ export function FormNewScheduling(props) {
                                     id={"radio_horario_" + index}
                                     custom
                                     checked={formik.values.selected_time.time && formik.values.selected_time.time == aval.time}
-                                    disabled={!aval.active}
+                                    disabled={!aval.active && !formik.values.id || (formik.values.id && formik.values.selected_time.time !== aval.time)}
                                     style={{
                                         paddingLeft: "10px", 
                                         paddingRight: "10px", 
@@ -175,7 +172,13 @@ export function FormNewScheduling(props) {
                             {formik.errors.selected_time && formik.errors.selected_time.time && <label className="invalid-feedback d-block">{formik.errors.selected_time.time}</label>}
                         </div>
                     </div>
+                </div>                
+
+                { showChooseProfessional &&
+                <div className="col-xl-12 col-md-12 mb-8">
+                    <PickerProfissionais formik={props.formik} fieldName={'profissional_id'} placeholder="Escolha um profissional" />
                 </div>
+                }
 
                 {
                     showDomociliarSheduling && 
@@ -229,16 +232,18 @@ export function FormNewScheduling(props) {
                             type={"checkbox"}
                             id={`fixo`}
                             label={`Sim`}
+                            
+                            checked={formik.values.fixo}
                             disabled={fixedShedulingDisabled}
                             onChange={(evt)=>{
                                 if ( evt.target.checked ) {
                                     formik.setFieldValue("fixo", 
-                                        "true"
+                                        true
                                     );
                                 } else {
 
                                     formik.setFieldValue("fixo", 
-                                        "false"
+                                        false
                                     );
                                 }
                             }}
