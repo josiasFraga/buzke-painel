@@ -29,12 +29,6 @@ export function StepTwo(props) {
     const formik = props.formik;
     const classes = useStyles();
 
-    if ( formik.errors.torneio_categoria && formik.errors.torneio_categoria[0] ) {
-        console.log(formik.errors.torneio_categoria[0].n_chaves);
-        console.log(formik.touched.torneio_categoria[0].n_chaves);
-
-    }
-
     return (
         <FormikProvider value={formik}>
             <FieldArray
@@ -65,20 +59,6 @@ export function StepTwo(props) {
                         formik.touched.torneio_categoria && 
                         formik.touched.torneio_categoria[index] &&
                         formik.touched.torneio_categoria[index].limite_duplas;
-
-                        const n_chaves_invalid = formik.errors.torneio_categoria && 
-                        formik.errors.torneio_categoria[index] &&
-                        formik.errors.torneio_categoria[index].n_chaves && 
-                        formik.touched.torneio_categoria && 
-                        formik.touched.torneio_categoria[index] &&
-                        formik.touched.torneio_categoria[index].n_chaves;
-
-                        const n_duplas_p_chave_invalid = formik.errors.torneio_categoria && 
-                        formik.errors.torneio_categoria[index] &&
-                        formik.errors.torneio_categoria[index].n_duplas_p_chave && 
-                        formik.touched.torneio_categoria && 
-                        formik.touched.torneio_categoria[index] &&
-                        formik.touched.torneio_categoria[index].n_duplas_p_chave;
 
                         const sexo_invalid = formik.errors.torneio_categoria && 
                         formik.errors.torneio_categoria[index] &&
@@ -161,34 +141,6 @@ export function StepTwo(props) {
                                         </div>
     
                                         <div className="col-md-12 mb-8">
-                                            <label className="form-label">Nº de Chaves <span className="text-danger">&nbsp;*</span></label>
-                                            <input
-                                                type="number"
-                                                name={`torneio_categoria.${index}.n_chaves`}
-                                                className={"form-control " + (n_chaves_invalid ? 'is-invalid' : '')}
-                                                value={categoria.n_chaves}
-                                                onChange={(evt) => {
-                                                    formik.setFieldValue(`torneio_categoria.${index}.n_chaves`, evt.target.value);
-                                                }}
-                                            />
-                                            {n_chaves_invalid && <label className="invalid-feedback">{formik.errors.torneio_categoria[index].n_chaves}</label>}
-                                        </div>
-    
-                                        <div className="col-md-12 mb-8">
-                                            <label className="form-label">Nº de Duplas por Chave <span className="text-danger">&nbsp;*</span></label>
-                                            <input
-                                                type="number"
-                                                name={`torneio_categoria.${index}.n_duplas_p_chave`}
-                                                className={"form-control " + (n_duplas_p_chave_invalid ? 'is-invalid' : '')}
-                                                value={categoria.n_duplas_p_chave}
-                                                onChange={(evt) => {
-                                                    formik.setFieldValue(`torneio_categoria.${index}.n_duplas_p_chave`, evt.target.value);
-                                                }}
-                                            />
-                                            {n_duplas_p_chave_invalid && <label className="invalid-feedback">{formik.errors.torneio_categoria[index].n_duplas_p_chave}</label>}
-                                        </div>
-    
-                                        <div className="col-md-12 mb-8">
                                             <label className="form-label">Limite de duplas nesta categoria <span className="text-danger">&nbsp;*</span></label>
                                             <input
                                                 type="number"
@@ -236,8 +188,6 @@ export function StepTwo(props) {
                                         categoria_id: "",
                                         nome: "",
                                         sexo: "",
-                                        n_chaves: "",
-                                        n_duplas_p_chave: "",
                                         limite_duplas: "",
                                     });
                                 }}

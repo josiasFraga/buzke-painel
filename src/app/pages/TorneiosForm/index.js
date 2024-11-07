@@ -97,6 +97,7 @@ export function TorneiosForm() {
       descricao: "",
       inicio: "",
       fim: "",
+      data_publicacao: "",
       inscricoes_de: "",
       inscricoes_ate: "",
       impedimentos: "",
@@ -107,8 +108,6 @@ export function TorneiosForm() {
             categoria_id: "",
             nome: "",
             sexo: "",
-            n_chaves: "",
-            n_duplas_p_chave: "",
             limite_duplas: "",
         }
       ],
@@ -143,8 +142,6 @@ export function TorneiosForm() {
             categoria_id: "1",
             nome: "",
             sexo: "F",
-            n_chaves: "5",
-            n_duplas_p_chave: "3",
             limite_duplas: "20",
         }
       ],
@@ -214,9 +211,7 @@ export function TorneiosForm() {
                 then: yup.string().required("Obrigatório")
             }),
             sexo: yup.string().required('Obrigatório'),
-            limite_duplas: yup.number().required('Obrigatório'),
-            n_chaves: yup.number().required('Obrigatório'),
-            n_duplas_p_chave: yup.number().required('Obrigatório'),
+            limite_duplas: yup.number().required('Obrigatório')
         })
         )
         .min(1, 'Você deve adicionar, pelo menos, uma categoria!'),

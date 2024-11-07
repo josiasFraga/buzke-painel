@@ -36,8 +36,8 @@ export function StepOne(props) {
             </div>
 
             <div className='row' style={{paddingLeft: 15, paddingRight: 15}}>
-                <div className="col-md-6 mb-8">
-                    <label className="form-label">Exibir torneio aos usuários a partir de...<span className="text-danger">&nbsp;*</span></label>
+                <div className="col-md-4 mb-8">
+                    <label className="form-label">Início do torneio em...<span className="text-danger">&nbsp;*</span></label>
                     <input
                         type="date"
                         min={new Date().toISOString().split('T')[0]}
@@ -49,8 +49,8 @@ export function StepOne(props) {
                     {formik.errors.inicio && formik.touched.inicio && <label className="invalid-feedback">{formik.errors.inicio}</label>}
                 </div>
 
-                <div className="col-md-6 mb-8">
-                    <label className="form-label">Fim <span className="text-danger">&nbsp;*</span></label>
+                <div className="col-md-4 mb-8">
+                    <label className="form-label">Fim do torneio em...<span className="text-danger">&nbsp;*</span></label>
                     <input
                         type="date"
                         min={new Date().toISOString().split('T')[0]}
@@ -60,6 +60,19 @@ export function StepOne(props) {
                         onChange={formik.handleChange}
                     />
                     {formik.errors.fim && formik.touched.fim && <label className="invalid-feedback">{formik.errors.fim}</label>}
+                </div>
+                
+                <div className="col-md-4 mb-8">
+                    <label className="form-label">Exibir torneio aos usuários a partir de...<span className="text-danger">&nbsp;*</span></label>
+                    <input
+                        type="date"
+                        min={new Date().toISOString().split('T')[0]}
+                        name="data_publicacao"
+                        className={"form-control " + (formik.errors.inicio && formik.touched.data_publicacao ? 'is-invalid' : '')}
+                        value={formik.values.data_publicacao}
+                        onChange={formik.handleChange}
+                    />
+                    {formik.errors.data_publicacao && formik.touched.data_publicacao && <label className="invalid-feedback">{formik.errors.data_publicacao}</label>}
                 </div>
             </div>
 
